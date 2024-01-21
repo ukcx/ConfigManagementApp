@@ -3,20 +3,8 @@ const bcrypt = require('bcrypt');
 
 const { serviceAccount, databaseURL } = require('./firebaseConfig.cjs');
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA9jqFzpEufd09PK2gPQY767AbVLq5psIo",
-  authDomain: "case-study-241cf.firebaseapp.com",
-  databaseURL: "https://case-study-241cf-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "case-study-241cf",
-  storageBucket: "case-study-241cf.appspot.com",
-  messagingSenderId: "563450836284",
-  appId: "1:563450836284:web:c2a19a7e714c0be86cda39",
-  measurementId: "G-R7TZGJQ1DR"
-};
-
 // Initialize Firebase Admin SDK
 admin.initializeApp({
-  firebaseConfig,
   credential: admin.credential.cert(serviceAccount),
   databaseURL: databaseURL,
 });
@@ -30,21 +18,67 @@ var databaseSkeleton = {
   users: {}
 };
 var dummyUsers = [
-  { email: 'ugurkagancakir@gmail.com', password: 'password1' },
+  { email: 'user1@example.com', password: 'password1' },
   { email: 'user2@example.com', password: 'password2' },
 ];
 // Get the project ID (replace 'yourProjectId' with an actual project ID)
 const projectId = 'case-study-241cf';
 // Update parameters for the specified project
-const dummyProjectParameters = {
-  freeUsageLimit: 5,
-  supportEmail: 'support@example.co',
-  privacyPage: 'https://example.comm/privacy_en.html',
-  minimumVersion: '1.0',
-  latestVersion: '2.1',
-  compressionQuality: 0.7,
-  btnText: 'Try now!',
-};
+const dateNow = Date.now();
+//format now as a date
+const now = new Date(dateNow).toISOString();
+
+const dummyProjectParameters = [
+  {
+    key: 'freeUsageLimit',
+    value: 1000,
+    description: 'Number of free API calls per month',
+    createDate: now,
+    lastUpdateDate: now
+  },
+  {
+    key: 'supportEmail',
+    value: 'support@example.co',
+    description: 'Support email address',
+    createDate: now,
+    lastUpdateDate: now
+  },
+  {
+    key: 'privacyPage',
+    value: 'https://example.comm/privacy_en.html',
+    description: 'URL of the privacy policy page',
+    createDate: now,
+    lastUpdateDate: now
+  },
+  {
+    key: 'minimumVersion',
+    value: '1.0',
+    description: 'Minimum supported app version',
+    createDate: now,
+    lastUpdateDate: now
+  },
+  {
+    key: 'latestVersion',
+    value: '2.1',
+    description: 'Latest supported app version',
+    createDate: now,
+    lastUpdateDate: now
+  },
+  {
+    key: 'compressionQuality',
+    value: 0.7,
+    description: 'Image compression quality',
+    createDate: now,
+    lastUpdateDate: now
+  },
+  {
+    key: 'btnText',
+    value: 'Try now!',
+    description: 'Text on the button',
+    createDate: now,
+    lastUpdateDate: now
+  }
+];
 
 // Write the dummy data to the database
 const createDatabase = async() => {
@@ -63,14 +97,20 @@ const createDatabase = async() => {
   // Write the updated data to the database
   const addDummyProjects = async() => {
     return new Promise((resolve, reject) => {
-      rootRef.child(`projects/${projectId}`).update(dummyProjectParameters, (error) => {
-        if (error) {
-          console.error('Error updating project parameters:', error);
-          reject(error);
-        } else {
-          console.log('Project parameters updated successfully.');
-          resolve();
-        }
+      // Get a reference to the project in the database
+      const projectRef = admin.database().ref(`/projects/${projectId}`);
+      dummyProjectParameters.forEach((parameter) => {
+        // Create a new child with a specified key
+        const newParameterRef = projectRef.child(parameter.key);
+        newParameterRef.set(parameter, (error) => {
+          if (error) {
+            console.error('Error updating project parameters:', error);
+            reject(error);
+          } else {
+            console.log('Project parameters updated successfully.');
+            resolve();
+          }
+        });
       });
     });
   };

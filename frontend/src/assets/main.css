@@ -1,0 +1,7 @@
+@import './base.css';
+
+
+#app{
+    background-color: #1E1E2B;
+    font-family: 'Roboto', sans-serif;
+}
