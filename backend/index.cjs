@@ -33,26 +33,6 @@ const validateFirebaseToken = async (req, res, next) => {
   }
 };
 
-// Example route for user login
-app.post('/login', async (req, res) => {
-  const idToken = req.body.idToken; // Get the firebase ID token from the request
-
-  try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const uid = decodedToken.uid;
-
-    // Fetch additional user information from the Realtime Database
-    const userSnapshot = await admin.database().ref(`/users/${uid}`).once('value');
-    const userData = userSnapshot.val();
-    console.log('User data from Realtime Database:', userData);
-
-    res.json({ message: 'Login successful', user: userData });
-  } catch (error) {
-    console.error('Error verifying ID token:', error);
-    res.status(401).json({ error: 'Incorrect username or password' });
-  }
-});
-
 // Add a new parameter for a project if it doesn't exist
 app.post('/:projectId', validateFirebaseToken, [
   check('key').not().isEmpty(),
@@ -226,3 +206,25 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
+
+// Example route for user login
+// app.post('/login', async (req, res) => {
+//   const idToken = req.body.idToken; // Get the firebase ID token from the request
+
+//   try {
+//     const decodedToken = await admin.auth().verifyIdToken(idToken);
+//     const uid = decodedToken.uid;
+
+//     // Fetch additional user information from the Realtime Database
+//     const userSnapshot = await admin.database().ref(`/users/${uid}`).once('value');
+//     const userData = userSnapshot.val();
+//     console.log('User data from Realtime Database:', userData);
+
+//     res.json({ message: 'Login successful', user: userData });
+//   } catch (error) {
+//     console.error('Error verifying ID token:', error);
+//     res.status(401).json({ error: 'Incorrect username or password' });
+//   }
+// });
