@@ -16,11 +16,8 @@ import Header from '../components/Header.vue'
 import Spinner from '../components/Spinner.vue'
 import { onMounted } from 'vue'
 import app from '../firebase.js'
-import { fetchDataApi } from '../api-functions/ApiFunctions.js'
-import { getAuth, signOut } from 'firebase/auth'
-import axios from 'axios'
-
-const projectName = "case-study-241cf"
+import { fetchAllConfigVariablesApi, handleSignoutApi } from '../api-functions/ApiFunctions.js'
+import { getAuth } from 'firebase/auth'
 
 let auth;
 onMounted(() => {
@@ -54,45 +51,22 @@ export default {
             this.isMobile = window.innerWidth < 768
         },
         handleSignout(){
-            if(!auth){
-                auth = getAuth(app);
-            }
-            console.log("signout");
-            signOut(auth).then(() => {
+            try{
+                const response = handleSignoutApi();
                 this.$router.push('/login');
-                }
-            ).catch((error) => {
+            }
+            catch(error){
                 console.log(error);
-            });
+            }
         },
         async fetchData(){
-            try {
-                const auth = getAuth(app);
-                console.log("here")
-                await auth.currentUser.getIdToken(true)
-                .then(async idToken => {
-                    await axios.get(`http://localhost:3000/${projectName}`, {    
-                        headers:{
-                            Authorization: `${idToken}`
-                        }                        
-                        }
-                    ).then(response => {
-                        let data = {}
-                        console.log(response.data)
-                        if(response.data !== undefined && response.data !== null) {
-                            data = response.data
-                        }
-                        this.data = data
-                        this.dataReady = true
-                        console.log(this.data)
-                    }).catch(error => {
-                        console.error(error)
-                    })
-                }).catch((error) => {
-                    console.error(error)
-                })
-            } catch (error) {
-                console.error(error)
+            try{
+                const data = await fetchAllConfigVariablesApi();
+                this.data = data;
+                this.dataReady = true;
+            }
+            catch(error){
+                console.log(error);
             }
         }
     }

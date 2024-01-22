@@ -43,9 +43,7 @@
 <script>
 import ButtonSmall from '../components/ButtonSmall.vue'
 import TextBox from '../components/TextBox.vue'
-import app from '../firebase'
-import axios from 'axios'
-import { getAuth } from "firebase/auth";
+import { deleteItemApi, addNewParameterApi } from '@/api-functions/ApiFunctions';
 
 export default {
     name: 'DesktopViewConfig',
@@ -71,58 +69,19 @@ export default {
             this.$router.push('/edit/' + parameterKey);
         },
         async addNewParameter() {
-            let auth = getAuth(app);
-            const projectName = "case-study-241cf"
-            try {
-                
-                await auth.currentUser.getIdToken(true).then(async idToken => {
-                    // Send token to your backend via HTTPS use axios
-                    await axios.post(`http://localhost:3000/${projectName}`, {
-                            key: this.new_parameter,
-                            value: this.value,
-                            description: this.new_description
-                        },
-                        {
-                            headers:{
-                                Authorization: `${idToken}`
-                            }
-                        }
-                    ).then((response) => {
-                        console.log(response);
-                        this.$emit('dataChanged')
-                    }).catch((error) => {
-                        console.log(error);
-                    });
-                }).catch(function(error) {
-                    console.error(error)
-                });
-            } catch (error) {
-                console.error(error)
+            try{
+                const response = await addNewParameterApi(this.new_parameter, this.value, this.new_description);
+                this.$emit('dataChanged');
+            }catch(error){
+                console.log(error);
             }
         },
         async deleteItem(itemId) {
-            let auth = getAuth(app);
-            const projectName = "case-study-241cf"
-            try {
-                await auth.currentUser.getIdToken(true).then(async idToken => {
-                    // Send token to your backend via HTTPS use axios
-                    await axios.delete(`http://localhost:3000/${projectName}`, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `${idToken}`
-                        },
-                        data: JSON.stringify({ key: itemId })
-                    }).then((response) => {
-                        console.log(response);
-                        this.$emit('dataChanged')
-                    }).catch((error) => {
-                        console.log(error);
-                    });
-                }).catch(function(error) {
-                    console.error(error)
-                });
-            } catch (error) {
-                console.error(error)
+            try{
+                const response = await deleteItemApi(itemId);
+                this.$emit('dataChanged');
+            }catch(error){
+                console.log(error);
             }
         }
     }

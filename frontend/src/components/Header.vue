@@ -1,6 +1,6 @@
 <template>
     <div class="header">
-        <Logo class="logo"></Logo>
+        <a href="/"><Logo class="logo"></Logo></a>
         <div class="dropdown" @click="toggleDropdown">
             <button class="dropbtn">
                 <span class="pi pi-user"></span>

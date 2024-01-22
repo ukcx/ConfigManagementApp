@@ -6,12 +6,12 @@
                 <p class="">{{ data["key"] }}</p>
             </div>
             <div class="row-edit">
-                <p class="bold">Value:</p>
-                <TextBox id="value" type="text" :placeholder="data['value']" v-model="new_value" required="true"></TextBox>
+                <Checkbox id="value checkbox mobile" type="checkbox" label="Value" class="bold" @inputChanged="inputChangedValue()"></Checkbox>
+                <TextBox id="value" type="text" :placeholder="data['value']" v-model="new_value_textbox" required="true" :disabled="disabled_value"></TextBox>
             </div>
             <div class="row-edit">
-                <p class="bold">Description:</p>
-                <TextBox id="new_description" type="text" :placeholder="data['description']" v-model="new_description" required="true"></TextBox>
+                <Checkbox id="desc checkbox mobile" type="checkbox" label="Description" class="bold" @inputChanged="inputChangedDesc()"></Checkbox>
+                <TextBox id="new_description" type="text" :placeholder="data['description']" v-model="new_description_textbox" required="true" :disabled="disabled_desc"></TextBox>
             </div>
             <div class="row-button-cell">
                 <ButtonSmall type="submit" color="secondary">Edit</ButtonSmall>
@@ -23,15 +23,15 @@
 <script>
 import ButtonSmall from '../components/ButtonSmall.vue'
 import TextBox from '../components/TextBox.vue'
-import axios from 'axios'
-import app from '../firebase'
-import { getAuth } from "firebase/auth";
+import Checkbox from '../components/Checkbox.vue'
+import { editParameterApi } from '@/api-functions/ApiFunctions';
 const projectName = "case-study-241cf"
 export default {
     name: 'MobileViewEdit',
     components: {
         ButtonSmall,
-        TextBox
+        TextBox,
+        Checkbox
     },
     props: {
         data: {
@@ -41,38 +41,45 @@ export default {
     },
     data() {
         return {
+            new_value_textbox: '',
+            new_description_textbox: '',
             new_value: '',
-            new_description: ''
+            new_description: '',
+            disabled_value: false,
+            disabled_desc: false
         }
     },
     created() {
     },
     methods: {
+        assignVariables(){
+            if(this.disabled_value){
+                this.new_value = this.data["value"];
+            }
+            else{
+                this.new_value = this.new_value_textbox;
+            }
+            if(this.disabled_desc){
+                this.new_description = this.data["description"];
+            }
+            else{
+                this.new_description = this.new_description_textbox;
+            }
+        },
         async editParameter(){
-            const auth = getAuth(app);
-            await auth.currentUser.getIdToken(true).then(async idToken => {
-                console.log(idToken);
-                await axios.put(`http://localhost:3000/${projectName}/`, {
-                    key: this.data["key"],
-                    value: this.new_value,
-                    description: this.new_description
-                },
-                {
-                    headers:{
-                        Authorization: `${idToken}`
-                    }
-                })
-                .then((response) => {
-                    console.log(response);
-                    this.$router.push('/');
-                }).catch((error) => {
-                    console.log(error);
-                }).catch((error) => {
-                    console.log(error);
-                });
-            }).catch((error) => {
+            try{
+                this.assignVariables();
+                const response = await editParameterApi(this.data["key"], this.new_value, this.new_description);
+                this.$router.push('/');
+            }catch(error){
                 console.log(error);
-            });
+            }
+        },
+        inputChangedValue(){
+            this.disabled_value = !this.disabled_value;
+        },
+        inputChangedDesc(){
+            this.disabled_desc = !this.disabled_desc;
         }
     }
 }

@@ -13,13 +13,12 @@
 import DesktopViewEdit from '../components/DesktopViewEdit.vue'
 import MobileViewEdit from '../components/MobileViewEdit.vue'
 import Spinner from '../components/Spinner.vue'
-import axios from 'axios'
 import Header from '../components/Header.vue'
 import { onMounted } from 'vue'
-import { getAuth, signOut } from 'firebase/auth'
+import { getAuth } from 'firebase/auth'
 import app from '../firebase.js'
+import { fetchOneConfigVariableApi, handleSignoutApi } from '../api-functions/ApiFunctions.js'
 
-const projectName = "case-study-241cf"
 let auth;
 onMounted(() => {
     auth = getAuth(app);
@@ -37,7 +36,6 @@ export default {
         return {
             isMobile: false,
             data: null,
-            dataReady: false
         }
     },
     beforeDestroy() {
@@ -54,39 +52,20 @@ export default {
             this.isMobile = window.innerWidth < 768
         },
         handleSignout(){
-            if(!auth){
-                auth = getAuth(app);
-            }
-            console.log("signout");
-            signOut(auth).then(() => {
+            try{
+                const response = handleSignoutApi();
                 this.$router.push('/login');
-                }
-            ).catch((error) => {
+            }
+            catch(error){
                 console.log(error);
-            });
+            }
         },
         async fetchData(key){
-            try {
-                const auth = getAuth(app);
-                console.log("here")
-                await auth.currentUser.getIdToken(true)
-                .then(async idToken => {
-                    await axios.get('http://localhost:3000/' + projectName + "/" + key, {    
-                        headers:{
-                            Authorization: `${idToken}`
-                        }                        
-                        }
-                    ).then(response => {
-                        this.data = response.data
-                        console.log(this.data)
-                    }).catch(error => {
-                        console.error(error)
-                    })
-                }).catch((error) => {
-                    console.error(error)
-                })
-            } catch (error) {
-                console.error(error)
+            try{
+                const response = await fetchOneConfigVariableApi(key);
+                this.data = response;
+            }catch(error){
+                console.log(error);
             }
         }
     }
