@@ -10,7 +10,7 @@ const countryCodes = countryCodesArray;
 const app = express();
 app.use(cors());
 const { serviceAccount, databaseURL } = require('./firebaseConfig.cjs');
-
+const processSet = new Set();
 
 // Firebase Admin SDK setup
 admin.initializeApp({
@@ -20,6 +20,24 @@ admin.initializeApp({
 
 // Set up middleware to parse JSON requests
 app.use(express.json());
+
+const getProcessString = (projectId, countryCode, key) => {
+  return `${projectId}-${countryCode}-${key}`;
+}
+
+const checkAndAddToProcessSet = async (processString) => {
+  if(processSet.has(processString)) {
+    return false;
+  }
+  else{
+    processSet.add(processString);
+    return true;
+  }
+}
+
+const removeFromProcessSet = async (processString) => {
+  processSet.delete(processString);
+}
 
 const validateCountryCode = async (cc)=>{
   try{
@@ -38,8 +56,6 @@ const validateCountryCode = async (cc)=>{
 // Middleware to validate Firebase ID token
 const validateFirebaseToken = async (req, res, next) => {
   const idToken = req.headers.authorization;
-  console.log(req.headers)
-
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedToken;
@@ -52,8 +68,6 @@ const validateFirebaseToken = async (req, res, next) => {
 
 const validateAPIToken = async (req, res, next) => {
   const apiToken = req.headers.authorization;
-  console.log(req.headers)
-
   try {
     if(apiToken === process.env.API_TOKEN) {
       next();
@@ -108,8 +122,6 @@ app.post('/:projectId', validateFirebaseToken, [
 
     // Get a reference to the parameter in the database
     const parameterRef = admin.database().ref(`/projects/${projectId}/${projectParameters.key}`);
-
-    // Check if the parameter exists
     const parameterSnapshot = await parameterRef.once('value');
     if (parameterSnapshot.exists()) {
       return res.status(405).json({ error: 'Parameter already exists!' });
@@ -121,7 +133,7 @@ app.post('/:projectId', validateFirebaseToken, [
     const newParameterRef = projectRef.child(projectParameters.key);
 
     const newProjectParameter = {
-      value: arrayToObject(countryCodes, projectParameters.value),
+      value: arrayToObject(countryCodes, projectParameters.value, false),
       description: projectParameters.description,
       key: projectParameters.key,
       createDate: new Date(Date.now()).toISOString(),
@@ -143,6 +155,8 @@ app.post('/:projectId', validateFirebaseToken, [
 app.put('/:projectId/:countryCode', validateFirebaseToken, [
   check('key').not().isEmpty()
 ], async (req, res) => {
+  const processString = getProcessString(req.params.projectId, req.params.countryCode, req.body.key);
+  console.log(processString);
     try {
       // Finds the validation errors in this request and wraps them in an object with handy functions
       const errors = validationResult(req);
@@ -156,10 +170,12 @@ app.put('/:projectId/:countryCode', validateFirebaseToken, [
       if(!await validateCountryCode(countryCode)) {
         return res.status(404).json({ error: 'Country code not found' });
       }
+      if(!checkAndAddToProcessSet(processString)){
+        return res.status(405).json({ error: 'Another request already in process' });
+      }
+
       // Get a reference to the parameter in the database
       const parameterRef = admin.database().ref(`/projects/${projectId}/${projectParameters.key}`);
-
-      // Check if the parameter exists
       const parameterSnapshot = await parameterRef.once('value');
       if (!parameterSnapshot.exists()) {
         return res.status(405).json({ error: 'Parameter doesn\'t exist!' });
@@ -167,22 +183,24 @@ app.put('/:projectId/:countryCode', validateFirebaseToken, [
       const newProjectParameter = {
         key: projectParameters.key,
         lastUpdateDate: new Date(Date.now()).toISOString(),
-        value: parameterSnapshot.val().value
-      }
-      if(projectParameters.value !== undefined) {
-        newProjectParameter["value"][countryCode] = projectParameters.value;
-      }
-      if(projectParameters.description !== undefined) {
-        newProjectParameter["description"] = projectParameters.description;
-      }
-      console.log(newProjectParameter)
-
+      };
+      // if(projectParameters.description !== undefined) {
+      //   newProjectParameter["description"] = projectParameters.description;
+      // }
+      console.log(newProjectParameter);
       // Update the project parameters
       await parameterRef.update(newProjectParameter);
-  
+
+      const valueRef = admin.database().ref(`/projects/${projectId}/${projectParameters.key}/value/${countryCode}`);
+      if(projectParameters.value !== undefined && projectParameters.value !== null) {
+        valueRef.set(projectParameters.value);
+      }
+      removeFromProcessSet(processString);
       res.json({ message: 'Project parameters updated successfully' });
-    } catch (error) {
+    } 
+    catch (error) {
       console.error('Error updating project parameters:', error);
+      removeFromProcessSet(processString);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -197,14 +215,11 @@ app.delete('/:projectId', validateFirebaseToken, [
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      //console.log(req.body)
       const { projectId } = req.params;
       const { key } = req.body;
   
       // Get a reference to the parameter in the database
       const parameterRef = admin.database().ref(`/projects/${projectId}/${key}`);
-  
-      // Check if the parameter exists
       const parameterSnapshot = await parameterRef.once('value');
       if (!parameterSnapshot.exists()) {
         return res.status(404).json({ error: 'Parameter not found' });
@@ -228,7 +243,7 @@ app.get('/:projectId/:countryCode', validateAPIToken, async (req, res) => {
         // Get project data from the database
         const projectSnapshot = await admin.database().ref(`/projects/${projectId}`).once('value');
         const projectData = projectSnapshot.val();
-        //console.log(projectData)
+
         if (projectData !== null) {
           for (const [key, value] of Object.entries(projectData)) {
             projectData[key].value = value.value[countryCode];
@@ -245,14 +260,14 @@ app.get('/:projectId/:countryCode', validateAPIToken, async (req, res) => {
     });
 
 // Serving route with predefined API token check
-app.get('/:projectId/:countryCode/:parameter', validateAPIToken, async (req, res) => {
+app.get('/:projectId/:countryCode/:key', validateAPIToken, async (req, res) => {
     try {
-      const { projectId, countryCode, parameter } = req.params;
+      const { projectId, countryCode, key } = req.params;
       if(!await validateCountryCode(countryCode)) {
         return res.status(404).json({ error: 'Country code not found' });
       }
       // Get project data from the database
-      const projectSnapshot = await admin.database().ref(`/projects/${projectId}/${parameter}`).once('value');
+      const projectSnapshot = await admin.database().ref(`/projects/${projectId}/${key}`).once('value');
       if(projectSnapshot.exists()) {
         const projectData = projectSnapshot.val();
         projectData.value = projectData.value[countryCode];
@@ -266,7 +281,6 @@ app.get('/:projectId/:countryCode/:parameter', validateAPIToken, async (req, res
       res.status(500).json({ error: 'Internal server error' });
     }
   });
-
 
 
 // Start the server

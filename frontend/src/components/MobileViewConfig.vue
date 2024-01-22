@@ -1,6 +1,6 @@
 <template>
     <div class="content-card">
-        <div class="card" v-for="(item, index) in Object.entries(data)" :key="item[0]">
+        <div class="card" v-for="(item, index) in data" :key="item[0]">
             <div class="row">
                 <p class="bold">Parameter Key: </p>
                 <p>{{ item[1]["key"] }}</p>
@@ -95,50 +95,5 @@ export default {
 </script>
 
 <style>
-.mobile-form {
-    height: fit-content;
-    width: 100%;
-}
-.content-card {
-    display: flex;
-    flex-direction: column;
-    height: fit-content;
-    width: 100%;
-}
-.card {
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 16px;
-    background-color: inherit;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.card .row{
-    padding: 2px;
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
-    height: 4vh;
-    width: 100%;
-}
-.card .row-button-cell{
-    padding: 2px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 5vh;
-    width: 100%;
-}
-.card .row-input-cell{
-    padding: 2px;
-    height: 6vh;
-    width: 100%;
-}
-.bold {
-    font-weight: bold;
-    color: white;
-    margin-right: 3px;
-}
+
 </style>

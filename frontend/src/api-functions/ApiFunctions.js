@@ -76,7 +76,7 @@ export async function editParameterApi(key, value, description, cc){
                 axios.put(`${serverUrl}/${projectName}/${cc}`, {
                     key: key,
                     value: value,
-                    description: description
+                    /*description: description*/
                 },
                 {
                     headers:{

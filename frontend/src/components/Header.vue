@@ -1,6 +1,6 @@
 <template>
     <div class="header">
-        <a @click="goToMainPage"><Logo class="logo"></Logo></a>
+        <a @click="goToMainPage" class="headerLogoLink"><Logo class="logo"></Logo></a>
         <div class="dropdown" @click="toggleDropdownCountries">
             <button class="dropbtn">
                 <span>{{ chosenCountry }}</span>
@@ -114,6 +114,10 @@ export default {
     width: 100%;
     text-decoration: none;
     display: block;
+    cursor: pointer;
+}
+
+.headerLogoLink{
     cursor: pointer;
 }
 </style>

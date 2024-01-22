@@ -28,51 +28,51 @@ const now = new Date(dateNow).toISOString();
 const dummyProjectParameters = [
   {
     key: 'freeUsageLimit',
-    value: arrayToObject(countryCodes.countryCodes, 1000),
+    value: arrayToObject(countryCodes.countryCodes, 1000, true),
     description: 'Number of free API calls per month',
-    createDate: now,
+    createDate: new Date(dateNow).toISOString(),
     lastUpdateDate: now
   },
   {
     key: 'supportEmail',
-    value: arrayToObject(countryCodes.countryCodes, 'support@example.co'),
+    value: arrayToObject(countryCodes.countryCodes, 'support@example.co', true),
     description: 'Support email address',
-    createDate: now,
+    createDate: new Date(dateNow - 1000).toISOString(),
     lastUpdateDate: now
   },
   {
     key: 'privacyPage',
-    value: arrayToObject(countryCodes.countryCodes, 'https://example.co/privacy'),
+    value: arrayToObject(countryCodes.countryCodes, 'https://example.co/privacy', true),
     description: 'URL of the privacy policy page',
-    createDate: now,
+    createDate: new Date(dateNow - 2000).toISOString(),
     lastUpdateDate: now
   },
   {
     key: 'minimumVersion',
-    value: arrayToObject(countryCodes.countryCodes, '1.0'),
+    value: arrayToObject(countryCodes.countryCodes, '1.0', true),
     description: 'Minimum supported app version',
-    createDate: now,
+    createDate: new Date(dateNow - 3000).toISOString(),
     lastUpdateDate: now
   },
   {
     key: 'latestVersion',
-    value: arrayToObject(countryCodes.countryCodes, '1.1'),
+    value: arrayToObject(countryCodes.countryCodes, '1.1', true),
     description: 'Latest supported app version',
-    createDate: now,
+    createDate: new Date(dateNow - 4000).toISOString(),
     lastUpdateDate: now
   },
   {
     key: 'compressionQuality',
-    value: arrayToObject(countryCodes.countryCodes, 0.5),
+    value: arrayToObject(countryCodes.countryCodes, 0.5, true),
     description: 'Image compression quality',
-    createDate: now,
+    createDate: new Date(dateNow - 5000).toISOString(),
     lastUpdateDate: now
   },
   {
     key: 'btnText',
-    value: arrayToObject(countryCodes.countryCodes, 'Click me!'),
+    value: arrayToObject(countryCodes.countryCodes, 'Click me!', true),
     description: 'Text on the button',
-    createDate: now,
+    createDate: new Date(dateNow - 6000).toISOString(),
     lastUpdateDate: now
   }
 ];
@@ -148,8 +148,8 @@ const addCountryCodes = async() => {
     try {
       await addCountryCodes();
       await addDummyProjects(dummyParameters);
-      // const userPromises = users.map(user => authenticateOneUser(user));
-      // await Promise.all(userPromises);
+      const userPromises = users.map(user => authenticateOneUser(user));
+      await Promise.all(userPromises);
       await admin.app().delete();
     } 
     catch (error) {

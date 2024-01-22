@@ -5,10 +5,13 @@
                 <th>Parameter Key</th>
                 <th>Value</th>
                 <th>Desciption</th>
-                <th>Create Date</th>
+                <th @click="sortByCreateDate()" style="cursor: pointer;">Create Date
+                    <i v-if="sortAsc" class="pi pi-arrow-down"></i>
+                    <i v-else class="pi pi-arrow-up"></i>
+                </th>
                 <th>Last Update Date</th>
             </tr>
-            <tr v-for="(item, index) in Object.entries(data)" :key="item[0]">
+            <tr v-for="(item, index) in data" :key="item[0]">
                 <td>{{ item[1]["key"] }}</td>
                 <td>{{ item[1]["value"] }}</td>
                 <td>{{ item[1]["description"] }}</td>
@@ -24,13 +27,13 @@
             
                 <tr>
                 <td>
-                    <TextBox id="new_parameter" type="text" placeholder="New Parameter" v-model="new_parameter" required="true"></TextBox>
+                    <TextBox ref="keyTextBox" id="new_parameter" type="text" placeholder="New Parameter" v-model="new_parameter" required="true"></TextBox>
                 </td>
                 <td>
-                    <TextBox id="value" type="text" placeholder="Value" v-model="value" required="true"></TextBox>
+                    <TextBox ref="valueTextBox" id="value" type="text" placeholder="Value" v-model="value" required="true"></TextBox>
                 </td>
                 <td colspan="3">
-                    <TextBox id="new_description" type="text" placeholder="New Description" v-model="new_description" required="true"></TextBox>
+                    <TextBox ref="descTextBox" id="new_description" type="text" placeholder="New Description" v-model="new_description" required="true"></TextBox>
                 </td>
                 <td class="button-cell">
                     <ButtonSmall type="submit" color="secondary">Add</ButtonSmall>
@@ -55,7 +58,8 @@ export default {
         return {
             new_parameter: '',
             value: '',
-            new_description: ''
+            new_description: '',
+            sortAsc: true
         }
     },
     props: {
@@ -76,6 +80,7 @@ export default {
             }catch(error){
                 console.log(error);
             }
+            
         },
         async deleteItem(itemId) {
             try{
@@ -84,40 +89,25 @@ export default {
             }catch(error){
                 console.log(error);
             }
+        },
+        sortByCreateDate(){
+            this.sortAsc = !this.sortAsc;
+            let data = null;
+            if(this.sortAsc){
+                data = this.data.sort((item, index) => (item[1]["createDate"] > index[1]["createDate"]) ? 1 : -1);
+                console.log(data);
+            }
+            else{
+                data = this.data.sort((item, index) => (item[1]["createDate"] < index[1]["createDate"]) ? 1 : -1);
+                console.log(data);
+            }
+            console.log(data);
+            this.data = data;            
         }
     }
 }
 </script>
 
 <style>
-.desktop-form {
-    width: 100%;
-}
-.content-table {
-    display: table;
-    height: fit-content;
-    width: 100%;
-    margin-bottom: 20px;
-}
-.content-table tr{
-    display: table-row;
-    width: 100%;
-    height: 50px;
-}
-.content-table th{
-    padding: 0px;
-    text-align: left;
-    font-size: large;
-    color: #67788f;
-    padding: 0 10px;
-}
-.content-table td {
-    padding: 0 10px;
-    text-align: left;
-    color: white;
-}
-.button-cell{
-    width: 8%;
-    padding: 2px;
-}
+
 </style>

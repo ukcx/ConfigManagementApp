@@ -1,5 +1,5 @@
 <template>
-    <input :disabled="disabled" :type="type" :id="id" :placeholder="placeholder" :style="textBoxStyle" :required="required" v-model="inputValue">
+    <input :ref="ref" :disabled="disabled" :type="type" :id="id" :placeholder="placeholder" :style="textBoxStyle" :required="required" v-model="inputValue">
 </template>
 
 <script>
@@ -7,6 +7,10 @@ import { colors } from '../styles/colors.js'
 export default {
     name: 'TextBox',
     props: {
+        ref: {
+            type: String,
+            default: ''
+        },
         disabled: {
             type: Boolean,
             default: false

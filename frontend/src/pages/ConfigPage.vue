@@ -68,7 +68,7 @@ export default {
             try{
                 const country = localStorage.getItem('chosenCountry');
                 const data = await fetchAllConfigVariablesApi(country);
-                this.data = data;
+                this.data = Object.entries(data);
                 this.dataReady = true;
             }
             catch(error){

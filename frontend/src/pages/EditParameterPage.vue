@@ -67,8 +67,8 @@ export default {
         async fetchData(){
             try{
                 const key = this.$route.params.parameterKey;
-                const cc = this.$route.params.cc;
-                const response = await fetchOneConfigVariableApi(key, cc);
+                const country = localStorage.getItem('chosenCountry');
+                const response = await fetchOneConfigVariableApi(key, country);
                 this.data = response;
             }catch(error){
                 console.log(error);

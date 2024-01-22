@@ -7,7 +7,8 @@
                     <Checkbox id="value checkbox" type="checkbox" label="Value" class="checkbox" @inputChanged="inputChangedValue()"></Checkbox>
                 </th>
                 <th>
-                    <Checkbox id="desc checkbox" type="checkbox" label="Desciption" class="checkbox" @inputChanged="inputChangedDesc()"></Checkbox>
+                    Description
+                    <!-- <Checkbox id="desc checkbox" type="checkbox" label="Desciption" class="checkbox" @inputChanged="inputChangedDesc()"></Checkbox> -->
                 </th>
             </tr>
             <tr>
@@ -18,7 +19,8 @@
                     <TextBox id="new_value" type="text" :placeholder="data['value']" v-model="new_value_textbox" required="true" :disabled="disabled_value"></TextBox>
                 </td>
                 <td colspan="3">
-                    <TextBox id="new_description" type="text" :placeholder="data['description']" v-model="new_description_textbox" required="true" :disabled="disabled_desc"></TextBox>
+                    <p>{{ data["description"] }}</p>
+                    <!-- <TextBox id="new_description" type="text" :placeholder="data['description']" v-model="new_description_textbox" required="true" :disabled="disabled_desc"></TextBox> -->
                 </td>
                 <td class="button-cell">
                     <ButtonSmall type="submit" color="secondary">Edit</ButtonSmall>
@@ -94,34 +96,5 @@ export default {
 </script>
 
 <style>
-.desktop-form {
-    width: 100%;
-}
-.content-table {
-    display: table;
-    height: fit-content;
-    width: 100%;
-    margin-bottom: 20px;
-}
-.content-table tr{
-    display: table-row;
-    width: 100%;
-    height: 50px;
-}
-.content-table th{
-    padding: 0px;
-    text-align: left;
-    font-size: large;
-    color: #67788f;
-    padding: 0 10px;
-}
-.content-table td {
-    padding: 0 10px;
-    text-align: left;
-    color: white;
-}
-.button-cell{
-    width: 8%;
-    padding: 2px;
-}
+
 </style>

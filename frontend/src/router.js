@@ -14,6 +14,10 @@ const routes = [
     component: LoginPage
   },
   {
+    path: '/',
+    redirect: '/' + localStorage.getItem('chosenCountry'),
+  },
+  {
     path: '/:cc',
     name: 'Config',
     component: ConfigPage,
