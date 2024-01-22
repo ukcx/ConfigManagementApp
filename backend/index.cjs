@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const admin = require('firebase-admin');
-const bcrypt = require('bcrypt');
 const { check, validationResult } = require('express-validator');
 
 const app = express();
@@ -128,8 +127,8 @@ app.put('/:projectId', validateFirebaseToken, [
     }
   });
   
-  // Serving route with predefined API token check
-  app.delete('/:projectId', validateFirebaseToken, [
+// Serving route with predefined API token check
+app.delete('/:projectId', validateFirebaseToken, [
     check('key').not().isEmpty()
   ], async (req, res) => {
     try {
@@ -159,8 +158,8 @@ app.put('/:projectId', validateFirebaseToken, [
     }
   });
 
-  // Serving route with predefined API token check
-  app.get('/:projectId', validateFirebaseToken, async (req, res) => {
+// Serving route with predefined API token check
+app.get('/:projectId', validateFirebaseToken, async (req, res) => {
       try {
         const { projectId } = req.params;
     
@@ -180,8 +179,8 @@ app.put('/:projectId', validateFirebaseToken, [
       }
     });
 
-  // Serving route with predefined API token check
-  app.get('/:projectId/:parameter', validateFirebaseToken, async (req, res) => {
+// Serving route with predefined API token check
+app.get('/:projectId/:parameter', validateFirebaseToken, async (req, res) => {
     try {
       const { projectId, parameter } = req.params;
       console.log(projectId, parameter)

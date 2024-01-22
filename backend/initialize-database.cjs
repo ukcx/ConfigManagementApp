@@ -1,5 +1,4 @@
 const admin = require('firebase-admin');
-const bcrypt = require('bcrypt');
 
 const { serviceAccount, databaseURL } = require('./firebaseConfig.cjs');
 
@@ -12,17 +11,13 @@ admin.initializeApp({
 // Get a reference to the root of your database
 const db = admin.database();
 const rootRef = db.ref();
+const projectId = 'case-study-241cf';
 
-var databaseSkeleton = {
-  projects: {},
-  users: {}
-};
 var dummyUsers = [
   { email: 'user1@example.com', password: 'password1' },
   { email: 'user2@example.com', password: 'password2' },
 ];
-// Get the project ID (replace 'yourProjectId' with an actual project ID)
-const projectId = 'case-study-241cf';
+
 // Update parameters for the specified project
 const dateNow = Date.now();
 //format now as a date
@@ -81,25 +76,25 @@ const dummyProjectParameters = [
 ];
 
 // Write the dummy data to the database
-const createDatabase = async() => {
-  return new Promise((resolve, reject) => {
-    rootRef.set(databaseSkeleton, (error) => {
-      if (error) {
-        console.error('Error writing dummy data to the database:', error);
-        reject(error);
-      } else {
-        console.log('Dummy data has been successfully written to the database.');
-        resolve();
-      }
-    });
-  });
-} 
+// const createDatabase = async() => {
+//   return new Promise((resolve, reject) => {
+//     rootRef.set(databaseSkeleton, (error) => {
+//       if (error) {
+//         console.error('Error writing dummy data to the database:', error);
+//         reject(error);
+//       } else {
+//         console.log('Dummy data has been successfully written to the database.');
+//         resolve();
+//       }
+//     });
+//   });
+// } 
   // Write the updated data to the database
-  const addDummyProjects = async() => {
+  const addDummyProjects = async(dummyParameters) => {
     return new Promise((resolve, reject) => {
       // Get a reference to the project in the database
       const projectRef = admin.database().ref(`/projects/${projectId}`);
-      dummyProjectParameters.forEach((parameter) => {
+      dummyParameters.forEach((parameter) => {
         // Create a new child with a specified key
         const newParameterRef = projectRef.child(parameter.key);
         newParameterRef.set(parameter, (error) => {
@@ -115,7 +110,7 @@ const createDatabase = async() => {
     });
   };
 
-  const authenticateAndAddOneUserToDatabase = async (user) => {
+  const authenticateOneUser = async (user) => {
     try {
       const { email, password } = user;
       const userCredential = await admin.auth().createUser({
@@ -126,26 +121,24 @@ const createDatabase = async() => {
       });
       const uid = userCredential.uid;
       
-      await rootRef.child(`/users/${uid}`).update({ email: email });
+      // await rootRef.child(`/users/${uid}`).update({ email: email });
       console.log('Dummy user authenticated:', uid);
     } catch (error) {
-      console.error('Error authenticating dummy user:', error.message);
-      throw error;
+      console.error('Error authenticating dummy user:', error.message); 
     }
   };
   
-  const authenticateAndAddUsersToDatabase = async (users) => {
+  const authenticateUsersAndAddProjects = async (dummyParameters, users) => {
     try {
-      await createDatabase();
-      await addDummyProjects();
-      const userPromises = users.map(user => authenticateAndAddOneUserToDatabase(user));
+      //await createDatabase();
+      await addDummyProjects(dummyParameters);
+      const userPromises = users.map(user => authenticateOneUser(user));
       await Promise.all(userPromises);
       await admin.app().delete();
     } 
     catch (error) {
       console.error('Error authenticating dummy users', error.message);
-      throw error;
     }
   };
   
-  authenticateAndAddUsersToDatabase(dummyUsers);
+  authenticateUsersAndAddProjects(dummyProjectParameters, dummyUsers);
