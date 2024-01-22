@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 
 const { serviceAccount, databaseURL } = require('./firebaseConfig.cjs');
+const countryCodes = {countryCodes: ["TR", "EN", "TH", "FR"]};
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
@@ -47,7 +48,7 @@ const dummyProjectParameters = [
   },
   {
     key: 'minimumVersion',
-    value: '1.0',
+    value: ['1.0', '1.0'],
     description: 'Minimum supported app version',
     createDate: now,
     lastUpdateDate: now
@@ -89,6 +90,20 @@ const dummyProjectParameters = [
 //     });
 //   });
 // } 
+
+const addCountryCodes = async() => {
+  return new Promise((resolve, reject) => {
+    rootRef.set(countryCodes, (error) => {
+      if (error) {
+        console.error('Error writing country codes to the database:', error);
+        reject(error);
+      } else {
+        console.log('Country codes data has been successfully written to the database.');
+        resolve();
+      }
+    });
+  });
+} 
   // Write the updated data to the database
   const addDummyProjects = async(dummyParameters) => {
     return new Promise((resolve, reject) => {
@@ -130,7 +145,7 @@ const dummyProjectParameters = [
   
   const authenticateUsersAndAddProjects = async (dummyParameters, users) => {
     try {
-      //await createDatabase();
+      await addCountryCodes();
       await addDummyProjects(dummyParameters);
       const userPromises = users.map(user => authenticateOneUser(user));
       await Promise.all(userPromises);

@@ -1,7 +1,8 @@
 // firebaseConfig.js
+require('dotenv').config();
 
 module.exports = {
     serviceAccount: require('./accountKey/ServiceAccountKey.json'),
-    databaseURL: 'https://case-study-241cf-default-rtdb.europe-west1.firebasedatabase.app',
+    databaseURL: process.env.databaseURL,
   };
   

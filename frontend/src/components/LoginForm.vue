@@ -24,8 +24,8 @@
 <script>
 import TextBox from './TextBox.vue'
 import Button from './Button.vue'
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from 'vue-router';
+import { handleLoginApi, handleLoginTokenExchange } from '@/api-functions/ApiFunctions';
 const router = useRouter();
 export default {
     name: 'LoginForm',
@@ -41,35 +41,23 @@ export default {
         }
     },
     methods: {
-        login() {
-            const auth = getAuth();
-            signInWithEmailAndPassword(auth, this.email, this.password).then(
-                (data) => {
-                    console.log(auth.currentUser);
-                    this.$router.push('/');
-                }
-            ).catch((error) => {
-                console.log(error.code);
-                switch (error.code) {
-                    case 'auth/invalid-email':
-                        alert('Invalid email address format.');
-                        break;
-                    case 'auth/user-disabled':
-                        alert('User with this email has been disabled.');
-                        break;
-                    case 'auth/user-not-found':
-                        alert('User with this email does not exist.');
-                        break;
-                    case 'auth/wrong-password':
-                        alert('Invalid password.');
-                        break;
-                    default:
-                        alert(error.message);
-                        break;
-                }
-            });
-            // Here you can add your login logic, such as sending a request to your backend API
-            console.log(`Logging in with email ${this.email} and password ${this.password}`)
+        async login() {
+            try{
+                await handleLoginApi(this.email, this.password);
+                await handleLoginTokenExchange();
+                this.$router.push('/');
+            }
+            catch(error){
+                alert(error.message);
+            }
+            console.log()
+            // if(handleLoginApi(this.email, this.password)){
+            //     console.log("Login successful")
+            //     
+            // }
+            // else{
+            //     console.log("Login not successful")
+            // }
         }
     }
 }

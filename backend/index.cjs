@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const admin = require('firebase-admin');
 const { check, validationResult } = require('express-validator');
+require('dotenv').config();
+const countryCodes=["TR", "EN", "TH", "FR"];
 
 const app = express();
 app.use(cors());
@@ -31,6 +33,33 @@ const validateFirebaseToken = async (req, res, next) => {
     res.status(401).json({ error: 'Invalid Firebase ID token' });
   }
 };
+
+const validateAPIToken = async (req, res, next) => {
+  const apiToken = req.headers.authorization;
+  console.log(req.headers)
+
+  try {
+    if(apiToken === process.env.API_TOKEN) {
+      next();
+    }
+    else{
+      res.status(401).json({ error: 'Invalid API token' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({ error: 'Invalid API token' });
+  }
+};
+
+//Example route for user login
+app.post('/login',  validateFirebaseToken, async (req, res) => {
+  try {
+    res.json({ message: 'Login successful', apiToken: process.env.API_TOKEN });
+  } catch (error) {
+    console.error('Error verifying firebase ID token:', error);
+    res.status(401).json({ error: 'Error verifying firebase ID token' });
+  }
+});
 
 // Add a new parameter for a project if it doesn't exist
 app.post('/:projectId', validateFirebaseToken, [
@@ -159,7 +188,7 @@ app.delete('/:projectId', validateFirebaseToken, [
   });
 
 // Serving route with predefined API token check
-app.get('/:projectId', validateFirebaseToken, async (req, res) => {
+app.get('/:projectId', validateAPIToken, async (req, res) => {
       try {
         const { projectId } = req.params;
     
@@ -180,11 +209,14 @@ app.get('/:projectId', validateFirebaseToken, async (req, res) => {
     });
 
 // Serving route with predefined API token check
-app.get('/:projectId/:parameter', validateFirebaseToken, async (req, res) => {
+app.get('/:projectId/:parameter', validateAPIToken, async (req, res) => {
     try {
       const { projectId, parameter } = req.params;
-      console.log(projectId, parameter)
-  
+      // const ctSnapshot = await admin.database().ref(`/countryCodes`).once('value');
+      // const countryCodes = ctSnapshot.val();
+      // if(!countryCodes.includes(countryCode)) {
+      //   return res.status(404).json({ error: 'Country code not found' });
+      // }
       // Get project data from the database
       const projectSnapshot = await admin.database().ref(`/projects/${projectId}/${parameter}`).once('value');
       if(projectSnapshot.exists()) {
@@ -201,29 +233,7 @@ app.get('/:projectId/:parameter', validateFirebaseToken, async (req, res) => {
   });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-
-
-// Example route for user login
-// app.post('/login', async (req, res) => {
-//   const idToken = req.body.idToken; // Get the firebase ID token from the request
-
-//   try {
-//     const decodedToken = await admin.auth().verifyIdToken(idToken);
-//     const uid = decodedToken.uid;
-
-//     // Fetch additional user information from the Realtime Database
-//     const userSnapshot = await admin.database().ref(`/users/${uid}`).once('value');
-//     const userData = userSnapshot.val();
-//     console.log('User data from Realtime Database:', userData);
-
-//     res.json({ message: 'Login successful', user: userData });
-//   } catch (error) {
-//     console.error('Error verifying ID token:', error);
-//     res.status(401).json({ error: 'Incorrect username or password' });
-//   }
-// });
