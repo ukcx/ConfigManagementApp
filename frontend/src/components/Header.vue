@@ -1,6 +1,16 @@
 <template>
     <div class="header">
-        <a href="/"><Logo class="logo"></Logo></a>
+        <a @click="goToMainPage"><Logo class="logo"></Logo></a>
+        <div class="dropdown" @click="toggleDropdownCountries">
+            <button class="dropbtn">
+                <span>{{ chosenCountry }}</span>
+                <span v-if="isDropdownOpenCountries" class="pi pi-chevron-up"></span>
+                <span v-else class="pi pi-chevron-down"></span>
+            </button>
+            <div class="dropdown-content" v-show="isDropdownOpenCountries">
+                <button v-for="ct in countries" :key="ct" @click="handleCountryChange(ct)">{{ ct }}</button>
+            </div>
+        </div>
         <div class="dropdown" @click="toggleDropdown">
             <button class="dropbtn">
                 <span class="pi pi-user"></span>
@@ -23,8 +33,17 @@ export default {
     },
     data() {
         return {
-            isDropdownOpen: false
+            isDropdownOpen: false,
+            isDropdownOpenCountries: false,
+            countries: [],
+            chosenCountry: null
         }
+    },
+    created() {
+        this.countries = localStorage.getItem('countries').split(',');
+        console.log(this.countries);
+        this.chosenCountry = localStorage.getItem('chosenCountry');
+        console.log(this.chosenCountry);
     },
     methods: {
         handleSignout() {
@@ -32,6 +51,18 @@ export default {
         },
         toggleDropdown() {
             this.isDropdownOpen = !this.isDropdownOpen;
+        },
+        toggleDropdownCountries() {
+            this.isDropdownOpenCountries = !this.isDropdownOpenCountries;
+        },
+        handleCountryChange(country) {
+            this.chosenCountry = country;
+            localStorage.setItem('chosenCountry', country);
+            this.$emit('countryChanged', country);
+            this.$emit('dataChanged', country);
+        },
+        goToMainPage() {
+            this.$router.push('/' + this.chosenCountry);
         }
     }
 }

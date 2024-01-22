@@ -1,7 +1,8 @@
 const admin = require('firebase-admin');
-
+const { arrayToObject } = require('./helperFunctions.cjs');
 const { serviceAccount, databaseURL } = require('./firebaseConfig.cjs');
-const countryCodes = {countryCodes: ["TR", "EN", "TH", "FR"]};
+const { countryCodesArray } = require('./firebaseConfig.cjs');
+const countryCodes = {countryCodes: countryCodesArray};
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
@@ -27,49 +28,49 @@ const now = new Date(dateNow).toISOString();
 const dummyProjectParameters = [
   {
     key: 'freeUsageLimit',
-    value: 1000,
+    value: arrayToObject(countryCodes.countryCodes, 1000),
     description: 'Number of free API calls per month',
     createDate: now,
     lastUpdateDate: now
   },
   {
     key: 'supportEmail',
-    value: 'support@example.co',
+    value: arrayToObject(countryCodes.countryCodes, 'support@example.co'),
     description: 'Support email address',
     createDate: now,
     lastUpdateDate: now
   },
   {
     key: 'privacyPage',
-    value: 'https://example.comm/privacy_en.html',
+    value: arrayToObject(countryCodes.countryCodes, 'https://example.co/privacy'),
     description: 'URL of the privacy policy page',
     createDate: now,
     lastUpdateDate: now
   },
   {
     key: 'minimumVersion',
-    value: ['1.0', '1.0'],
+    value: arrayToObject(countryCodes.countryCodes, '1.0'),
     description: 'Minimum supported app version',
     createDate: now,
     lastUpdateDate: now
   },
   {
     key: 'latestVersion',
-    value: '2.1',
+    value: arrayToObject(countryCodes.countryCodes, '1.1'),
     description: 'Latest supported app version',
     createDate: now,
     lastUpdateDate: now
   },
   {
     key: 'compressionQuality',
-    value: 0.7,
+    value: arrayToObject(countryCodes.countryCodes, 0.5),
     description: 'Image compression quality',
     createDate: now,
     lastUpdateDate: now
   },
   {
     key: 'btnText',
-    value: 'Try now!',
+    value: arrayToObject(countryCodes.countryCodes, 'Click me!'),
     description: 'Text on the button',
     createDate: now,
     lastUpdateDate: now
@@ -147,8 +148,8 @@ const addCountryCodes = async() => {
     try {
       await addCountryCodes();
       await addDummyProjects(dummyParameters);
-      const userPromises = users.map(user => authenticateOneUser(user));
-      await Promise.all(userPromises);
+      // const userPromises = users.map(user => authenticateOneUser(user));
+      // await Promise.all(userPromises);
       await admin.app().delete();
     } 
     catch (error) {

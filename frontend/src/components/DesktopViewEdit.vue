@@ -75,9 +75,10 @@ export default {
         },
         async editParameter(){
             try{
+                const country = localStorage.getItem('chosenCountry');
                 this.assignVariables();
-                const response = await editParameterApi(this.data["key"], this.new_value, this.new_description);
-                this.$router.push('/');
+                const response = await editParameterApi(this.data["key"], this.new_value, this.new_description, country);
+                this.$router.push('/' + country);
             }catch(error){
                 console.log(error);
             }

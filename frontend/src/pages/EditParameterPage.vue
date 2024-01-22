@@ -1,6 +1,6 @@
 <template>
     <div class="config-page">
-        <Header @signOutFunction="handleSignout"></Header>
+        <Header @countryChanged="handleCountryChange" @signOutFunction="handleSignout"></Header>
         <div class="page-body">
             <Spinner v-if="!data"></Spinner>
             <MobileViewEdit v-else-if="isMobile" :data="data" @dataChanged="fetchData"/>
@@ -44,8 +44,7 @@ export default {
     created() {
         this.checkViewport()
         window.addEventListener('resize', this.checkViewport)
-        const parameter = this.$route.params.parameterKey;
-        this.fetchData(parameter)
+        this.fetchData()
     },
     methods: {
         checkViewport() {
@@ -60,9 +59,16 @@ export default {
                 console.log(error);
             }
         },
-        async fetchData(key){
+        handleCountryChange(){
+            const country = localStorage.getItem('chosenCountry');
+            this.$router.push('/' + country + "/edit/" + this.$route.params.parameterKey);
+            this.fetchData();
+        },
+        async fetchData(){
             try{
-                const response = await fetchOneConfigVariableApi(key);
+                const key = this.$route.params.parameterKey;
+                const cc = this.$route.params.cc;
+                const response = await fetchOneConfigVariableApi(key, cc);
                 this.data = response;
             }catch(error){
                 console.log(error);

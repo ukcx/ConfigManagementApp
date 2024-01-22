@@ -14,7 +14,7 @@ const routes = [
     component: LoginPage
   },
   {
-    path: '/',
+    path: '/:cc',
     name: 'Config',
     component: ConfigPage,
     meta: {
@@ -22,7 +22,7 @@ const routes = [
     }
   },
   {
-    path: '/edit/:parameterKey',
+    path: '/:cc/edit/:parameterKey',
     name: 'EditParameter',
     component: EditParameterPage,
     meta: {

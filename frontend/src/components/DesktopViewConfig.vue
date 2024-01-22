@@ -66,7 +66,8 @@ export default {
     },
     methods: {
         editItem(parameterKey){
-            this.$router.push('/edit/' + parameterKey);
+            const country = localStorage.getItem('chosenCountry');
+            this.$router.push( `/${country}/edit/${parameterKey}` );
         },
         async addNewParameter() {
             try{

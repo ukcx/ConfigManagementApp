@@ -45,19 +45,12 @@ export default {
             try{
                 await handleLoginApi(this.email, this.password);
                 await handleLoginTokenExchange();
-                this.$router.push('/');
+                const country = localStorage.getItem('chosenCountry');
+                this.$router.push(`/${country}`);
             }
             catch(error){
                 alert(error.message);
             }
-            console.log()
-            // if(handleLoginApi(this.email, this.password)){
-            //     console.log("Login successful")
-            //     
-            // }
-            // else{
-            //     console.log("Login not successful")
-            // }
         }
     }
 }

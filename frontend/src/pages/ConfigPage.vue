@@ -1,6 +1,6 @@
 <template>
     <div class="config-page">
-        <Header @signOutFunction="handleSignout"></Header>
+        <Header @countryChanged="handleCountryChange" @dataChanged="fetchData"  @signOutFunction="handleSignout"></Header>
         <div class="page-body">
             <Spinner v-if="!dataReady"></Spinner>
             <MobileViewConfig v-else-if="isMobile" :data="data" @dataChanged="fetchData"/>
@@ -59,9 +59,15 @@ export default {
                 console.log(error);
             }
         },
+        handleCountryChange(){
+            const country = localStorage.getItem('chosenCountry');
+            this.$router.push('/' + country);
+            this.fetchData();
+        },
         async fetchData(){
             try{
-                const data = await fetchAllConfigVariablesApi();
+                const country = localStorage.getItem('chosenCountry');
+                const data = await fetchAllConfigVariablesApi(country);
                 this.data = data;
                 this.dataReady = true;
             }

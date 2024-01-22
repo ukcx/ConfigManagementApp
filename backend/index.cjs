@@ -3,7 +3,9 @@ const cors = require('cors');
 const admin = require('firebase-admin');
 const { check, validationResult } = require('express-validator');
 require('dotenv').config();
-const countryCodes=["TR", "EN", "TH", "FR"];
+const { arrayToObject } = require('./helperFunctions.cjs');
+const { countryCodesArray } = require('./firebaseConfig.cjs');
+const countryCodes = countryCodesArray;
 
 const app = express();
 app.use(cors());
@@ -18,6 +20,20 @@ admin.initializeApp({
 
 // Set up middleware to parse JSON requests
 app.use(express.json());
+
+const validateCountryCode = async (cc)=>{
+  try{
+    const ctSnapshot = await admin.database().ref(`/countryCodes`).once('value');
+    const countryCodes = ctSnapshot.val();
+    if(!countryCodes.includes(cc)) {
+      return false;
+    }
+    return true;
+  }
+  catch(error){
+    return false
+  }
+}
 
 // Middleware to validate Firebase ID token
 const validateFirebaseToken = async (req, res, next) => {
@@ -61,6 +77,19 @@ app.post('/login',  validateFirebaseToken, async (req, res) => {
   }
 });
 
+app.get('/:projectId/countryCodes', async (req, res) => {
+  try {
+    // Get country codes data from the database
+    const countryCodesSnapshot = await admin.database().ref(`/countryCodes`).once('value');
+    const codesData = countryCodesSnapshot.val();
+    res.json( codesData );
+
+  } catch (error) {
+    console.error('Error serving project:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Add a new parameter for a project if it doesn't exist
 app.post('/:projectId', validateFirebaseToken, [
   check('key').not().isEmpty(),
@@ -92,7 +121,7 @@ app.post('/:projectId', validateFirebaseToken, [
     const newParameterRef = projectRef.child(projectParameters.key);
 
     const newProjectParameter = {
-      value: projectParameters.value,
+      value: arrayToObject(countryCodes, projectParameters.value),
       description: projectParameters.description,
       key: projectParameters.key,
       createDate: new Date(Date.now()).toISOString(),
@@ -111,7 +140,7 @@ app.post('/:projectId', validateFirebaseToken, [
 });
 
 // Update project parameters route with Firebase ID token validation
-app.put('/:projectId', validateFirebaseToken, [
+app.put('/:projectId/:countryCode', validateFirebaseToken, [
   check('key').not().isEmpty()
 ], async (req, res) => {
     try {
@@ -121,11 +150,12 @@ app.put('/:projectId', validateFirebaseToken, [
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const { projectId } = req.params;
+      const { projectId, countryCode } = req.params;
       const projectParameters = req.body;
-  
-      // Get a reference to the project in the database
-      const projectRef = admin.database().ref(`/projects/${projectId}`);
+      
+      if(!await validateCountryCode(countryCode)) {
+        return res.status(404).json({ error: 'Country code not found' });
+      }
       // Get a reference to the parameter in the database
       const parameterRef = admin.database().ref(`/projects/${projectId}/${projectParameters.key}`);
 
@@ -136,10 +166,11 @@ app.put('/:projectId', validateFirebaseToken, [
       }
       const newProjectParameter = {
         key: projectParameters.key,
-        lastUpdateDate: new Date(Date.now()).toISOString()
+        lastUpdateDate: new Date(Date.now()).toISOString(),
+        value: parameterSnapshot.val().value
       }
       if(projectParameters.value !== undefined) {
-        newProjectParameter["value"] = projectParameters.value;
+        newProjectParameter["value"][countryCode] = projectParameters.value;
       }
       if(projectParameters.description !== undefined) {
         newProjectParameter["description"] = projectParameters.description;
@@ -166,7 +197,7 @@ app.delete('/:projectId', validateFirebaseToken, [
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      console.log(req.body)
+      //console.log(req.body)
       const { projectId } = req.params;
       const { key } = req.body;
   
@@ -188,15 +219,20 @@ app.delete('/:projectId', validateFirebaseToken, [
   });
 
 // Serving route with predefined API token check
-app.get('/:projectId', validateAPIToken, async (req, res) => {
+app.get('/:projectId/:countryCode', validateAPIToken, async (req, res) => {
       try {
-        const { projectId } = req.params;
-    
+        const { projectId, countryCode } = req.params;
+        if(!await validateCountryCode(countryCode)) {
+          return res.status(404).json({ error: 'Country code not found' });
+        }
         // Get project data from the database
         const projectSnapshot = await admin.database().ref(`/projects/${projectId}`).once('value');
         const projectData = projectSnapshot.val();
-        console.log(projectData)
+        //console.log(projectData)
         if (projectData !== null) {
+          for (const [key, value] of Object.entries(projectData)) {
+            projectData[key].value = value.value[countryCode];
+          }
           res.json( projectData );
         } else {
           res.json({});
@@ -209,18 +245,17 @@ app.get('/:projectId', validateAPIToken, async (req, res) => {
     });
 
 // Serving route with predefined API token check
-app.get('/:projectId/:parameter', validateAPIToken, async (req, res) => {
+app.get('/:projectId/:countryCode/:parameter', validateAPIToken, async (req, res) => {
     try {
-      const { projectId, parameter } = req.params;
-      // const ctSnapshot = await admin.database().ref(`/countryCodes`).once('value');
-      // const countryCodes = ctSnapshot.val();
-      // if(!countryCodes.includes(countryCode)) {
-      //   return res.status(404).json({ error: 'Country code not found' });
-      // }
+      const { projectId, countryCode, parameter } = req.params;
+      if(!await validateCountryCode(countryCode)) {
+        return res.status(404).json({ error: 'Country code not found' });
+      }
       // Get project data from the database
       const projectSnapshot = await admin.database().ref(`/projects/${projectId}/${parameter}`).once('value');
       if(projectSnapshot.exists()) {
         const projectData = projectSnapshot.val();
+        projectData.value = projectData.value[countryCode];
         res.json( projectData );
       }
       else{
@@ -231,6 +266,8 @@ app.get('/:projectId/:parameter', validateAPIToken, async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+
+
 
 // Start the server
 const PORT = process.env.PORT || 5000;

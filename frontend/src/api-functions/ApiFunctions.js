@@ -7,7 +7,7 @@ const token_storage_name = "api_token";
 const projectName = "case-study-241cf";
 const serverUrl = "http://localhost:3000";
 
-export async function fetchAllConfigVariablesApi(){
+export async function fetchAllConfigVariablesApi(cc){
     return new Promise((resolve, reject) => {
         try {
             const token = localStorage.getItem(token_storage_name);
@@ -16,7 +16,7 @@ export async function fetchAllConfigVariablesApi(){
                 reject("No token found");
             }
             else{
-                axios.get(`${serverUrl}/${projectName}`, {    
+                axios.get(`${serverUrl}/${projectName}/${cc}`, {    
                     headers:{
                         Authorization: `${token}`
                     }                        
@@ -39,7 +39,7 @@ export async function fetchAllConfigVariablesApi(){
     })
 }
 
-export async function fetchOneConfigVariableApi(key){
+export async function fetchOneConfigVariableApi(key, cc){
     return new Promise((resolve, reject) => {
         try {
             const token = localStorage.getItem(token_storage_name);
@@ -48,7 +48,7 @@ export async function fetchOneConfigVariableApi(key){
                 reject("No token found");
             }
             else{
-                axios.get(`${serverUrl}/${projectName}/${key}`, {    
+                axios.get(`${serverUrl}/${projectName}/${cc}/${key}`, {    
                     headers:{
                         Authorization: `${token}`
                     }                        
@@ -67,13 +67,13 @@ export async function fetchOneConfigVariableApi(key){
     })
 }
 
-export async function editParameterApi(key, value, description){
+export async function editParameterApi(key, value, description, cc){
     return new Promise((resolve, reject) => {
         try {
             const auth = getAuth(app);
             auth.currentUser.getIdToken(true)
             .then(idToken => {
-                axios.put(`${serverUrl}/${projectName}/`, {
+                axios.put(`${serverUrl}/${projectName}/${cc}`, {
                     key: key,
                     value: value,
                     description: description
@@ -105,7 +105,7 @@ export async function deleteItemApi(itemId) {
             const auth = getAuth(app);
             auth.currentUser.getIdToken(true)
             .then(idToken => {
-                axios.delete(`${serverUrl}${projectName}`, {
+                axios.delete(`${serverUrl}/${projectName}`, {
                     headers:{
                         'Content-Type': 'application/json',
                         Authorization: `${idToken}`
@@ -237,6 +237,35 @@ export async function handleLoginTokenExchange() {
                 console.error(error)
                 reject(error)
             })
+        } catch (error) {
+            console.error(error)
+            reject(error)
+        }
+    })
+}
+
+export async function getCountryCodesApi(){
+    return new Promise((resolve, reject) => {
+        try {
+            const token = localStorage.getItem(token_storage_name);
+            console.log(token);
+            if(token === null || token === undefined){
+                reject("No token found");
+            }
+            else{
+                console.log(`${serverUrl}/${projectName}/countryCodes`);
+                axios.get(`${serverUrl}/${projectName}/countryCodes`, {    
+                    headers:{
+                        Authorization: `${token}`
+                    }                        
+                    }
+                ).then(response => {
+                    resolve(response.data)
+                }).catch(error => {
+                    console.error(error)
+                    reject(error)
+                })
+            }
         } catch (error) {
             console.error(error)
             reject(error)
