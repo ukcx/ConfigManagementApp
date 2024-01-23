@@ -15,7 +15,7 @@ import MobileViewEdit from '../components/MobileViewEdit.vue'
 import Spinner from '../components/Spinner.vue'
 import Header from '../components/Header.vue'
 import { fetchOneConfigVariableApi, handleSignoutApi, handleErrorMessage } from '../api-functions/ApiFunctions.js'
-import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '../env-variables/env.cjs';
 
 
 export default {

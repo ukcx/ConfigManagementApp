@@ -18,7 +18,7 @@ import { onMounted } from 'vue'
 import app from '../firebase.js'
 import { fetchAllConfigVariablesApi, handleSignoutApi, handleErrorMessage } from '../api-functions/ApiFunctions.js'
 import { getAuth } from 'firebase/auth'
-import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '../env-variables/env.cjs';
 
 let auth;
 onMounted(() => {

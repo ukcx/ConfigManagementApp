@@ -26,7 +26,7 @@
 
 <script>
 import Logo from '../components/Logo.vue'
-import { VUE_APP_COUNTRIES_STORAGE_NAME, VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
+import { VUE_APP_COUNTRIES_STORAGE_NAME, VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '../env-variables/env.cjs';
 export default {
     name: 'Header',
     components: {

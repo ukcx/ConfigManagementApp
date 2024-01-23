@@ -47,7 +47,7 @@
 import ButtonSmall from '../components/ButtonSmall.vue'
 import TextBox from '../components/TextBox.vue'
 import { deleteItemApi, addNewParameterApi, handleErrorMessage } from '@/api-functions/ApiFunctions';
-import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '../env-variables/env.cjs';
 
 export default {
     name: 'DesktopViewConfig',

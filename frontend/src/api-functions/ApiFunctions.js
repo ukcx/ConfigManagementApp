@@ -2,7 +2,7 @@ import { getAuth } from 'firebase/auth'
 import app from '../firebase.js'
 import axios from 'axios'
 import { signOut, signInWithEmailAndPassword } from 'firebase/auth'
-import { VUE_APP_PROJECT_NAME, VUE_APP_SERVER_URL, VUE_APP_TOKEN_STORAGE_NAME } from '../env-variables/env.js'
+import { VUE_APP_PROJECT_NAME, VUE_APP_SERVER_URL, VUE_APP_TOKEN_STORAGE_NAME } from '../env-variables/env.cjs'
 
 const token_storage_name = VUE_APP_TOKEN_STORAGE_NAME;
 const projectName = VUE_APP_PROJECT_NAME;
