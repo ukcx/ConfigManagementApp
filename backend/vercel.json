@@ -1,6 +1,6 @@
 {
     "version": 2,
     "name": "ConfigApp-backend",
-    "builds": [{ "src": "index.cjs", "use": "@vercel/node" }],
+    "builds": [{ "src": "index.cjs", "use": "@vercel/node" }]
     
   }
