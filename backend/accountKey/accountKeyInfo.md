@@ -1,1 +1,0 @@
-Put your service account key json file in this folder. The file name should be `ServiceAccountKey.json`.
