@@ -171,6 +171,7 @@ app.put('/:projectId/:countryCode', validateFirebaseToken, [
         return res.status(404).json({ error: 'Country code not found' });
       }
       if(!checkAndAddToProcessSet(processString)){
+        removeFromProcessSet(processString);
         return res.status(405).json({ error: 'Another request already in process' });
       }
 
@@ -178,6 +179,7 @@ app.put('/:projectId/:countryCode', validateFirebaseToken, [
       const parameterRef = admin.database().ref(`/projects/${projectId}/${projectParameters.key}`);
       const parameterSnapshot = await parameterRef.once('value');
       if (!parameterSnapshot.exists()) {
+        removeFromProcessSet(processString);
         return res.status(405).json({ error: 'Parameter doesn\'t exist!' });
       }
       const newProjectParameter = {
