@@ -4,7 +4,7 @@
         <div class="page-body">
             <Spinner v-if="!dataReady"></Spinner>
             <MobileViewConfig v-else-if="isMobile" :data="data" @dataChanged="fetchData"/>
-            <DesktopViewConfig v-else :data="data" @dataChanged="fetchData"/>
+            <DesktopViewConfig v-else :data="data" @updateData="updateToSortedData" @dataChanged="fetchData"/>
         </div>
     </div>
 </template>
@@ -75,6 +75,9 @@ export default {
             catch(error){
                 console.log(error);
             }
+        },
+        updateToSortedData(newData){
+            this.myData = newData;
         }
     }
 }

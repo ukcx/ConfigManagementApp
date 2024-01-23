@@ -12,7 +12,6 @@ export async function fetchAllConfigVariablesApi(cc){
     return new Promise((resolve, reject) => {
         try {
             const token = localStorage.getItem(token_storage_name);
-            console.log(token);
             if(token === null || token === undefined){
                 reject("No token found");
             }

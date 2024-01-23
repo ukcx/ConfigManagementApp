@@ -102,17 +102,15 @@ export default {
         },
         sortByCreateDate(){
             this.sortAsc = !this.sortAsc;
-            let data = null;
+            let sortedData = null;
             if(this.sortAsc){
-                data = this.data.sort((item, index) => (item[1]["createDate"] > index[1]["createDate"]) ? 1 : -1);
-                console.log(data);
+                sortedData = this.data.sort((a, b) => (a[1]["createDate"] > b[1]["createDate"]) ? 1 : -1);
             }
             else{
-                data = this.data.sort((item, index) => (item[1]["createDate"] < index[1]["createDate"]) ? 1 : -1);
-                console.log(data);
+                sortedData = this.data.sort((a, b) => (a[1]["createDate"] < b[1]["createDate"]) ? 1 : -1);
             }
-            console.log(data);
-            this.data = data;            
+            console.log(sortedData);
+            this.$emit('updateData', sortedData);      
         }
     }
 }
