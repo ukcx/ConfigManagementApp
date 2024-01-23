@@ -2,7 +2,7 @@ import { getAuth } from 'firebase/auth'
 import app from '../firebase.js'
 import axios from 'axios'
 import { signOut, signInWithEmailAndPassword } from 'firebase/auth'
-import { VUE_APP_PROJECT_NAME, VUE_APP_SERVER_URL, VUE_APP_TOKEN_STORAGE_NAME } from '@/env-variables/env.js'
+import { VUE_APP_PROJECT_NAME, VUE_APP_SERVER_URL, VUE_APP_TOKEN_STORAGE_NAME } from '../env-variables/env.js'
 
 const token_storage_name = VUE_APP_TOKEN_STORAGE_NAME;
 const projectName = VUE_APP_PROJECT_NAME;
@@ -28,12 +28,10 @@ export async function fetchAllConfigVariablesApi(cc){
                     }
                     resolve(data)
                 }).catch(error => {
-                    console.error(error)
                     reject(error)
                 })
             }
         } catch (error) {
-            console.error(error)
             reject(error)
         }
     })
@@ -83,6 +81,7 @@ export async function editParameterApi(key, value, description, cc){
                         Authorization: `${idToken}`
                     }
                 }).then(response => {
+                    console.log(response.data);
                     resolve(response.data)
                 }).catch(error => {
                     console.error(error)
@@ -179,7 +178,6 @@ export async function handleLoginApi(email, password) {
             const auth = getAuth(app);
             signInWithEmailAndPassword(auth, email, password).then(
                 (data) => {
-                    console.log(data);
                     localStorage.setItem(token_storage_name, data.user.refreshToken);
                     resolve(data);
                 }
@@ -216,7 +214,6 @@ export async function handleLoginTokenExchange() {
             const auth = getAuth(app);
             auth.currentUser.getIdToken(true)
             .then(idToken => {
-                console.log(idToken);
                 axios.post(`${serverUrl}/login`, {},
                     {
                         headers:{

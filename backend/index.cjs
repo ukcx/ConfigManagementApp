@@ -25,7 +25,7 @@ const getProcessString = (projectId, countryCode, key) => {
   return `${projectId}-${countryCode}-${key}`;
 }
 
-const checkAndAddToProcessSet = async (processString) => {
+const checkAndAddToProcessSet = (processString) => {
   if(processSet.has(processString)) {
     return false;
   }
@@ -35,7 +35,7 @@ const checkAndAddToProcessSet = async (processString) => {
   }
 }
 
-const removeFromProcessSet = async (processString) => {
+const removeFromProcessSet = (processString) => {
   processSet.delete(processString);
 }
 
