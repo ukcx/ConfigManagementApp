@@ -1,5 +1,5 @@
 <template>
-    <input :ref="ref" :disabled="disabled" :type="type" :id="id" :placeholder="placeholder" :style="textBoxStyle" :required="required" v-model="inputValue">
+    <input :ref="ref" :disabled="disabled" :type="type" :id="id" :placeholder="placeholder" :style="textBoxStyle" :required="isRequired" v-model="inputValue">
 </template>
 
 <script>
@@ -32,8 +32,8 @@ export default {
             default: ''
         },
         required: {
-            type: Boolean,
-            default: false
+            type: String,
+            default: "false"
         }
     },
     data() {
@@ -52,6 +52,9 @@ export default {
     methods: {
         clearInput() {
             this.inputValue = '';
+        },
+        isRequired() {
+            return this.required === "true";
         }
     },
     watch: {

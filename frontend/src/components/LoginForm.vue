@@ -24,8 +24,8 @@
 <script>
 import TextBox from './TextBox.vue'
 import Button from './Button.vue'
-import { handleLoginApi, handleLoginTokenExchange, handleErrorMessage } from '@/api-functions/ApiFunctions';
-import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
+import { handleLoginApi, handleLoginTokenExchange, handleErrorMessage, getCountryCodesApi } from '@/api-functions/ApiFunctions';
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME, VUE_APP_COUNTRIES_STORAGE_NAME } from '@/env-variables/env';
 export default {
     name: 'LoginForm',
     components: {
@@ -44,11 +44,28 @@ export default {
             try{
                 await handleLoginApi(this.email, this.password);
                 await handleLoginTokenExchange();
+                if(localStorage.getItem(VUE_APP_COUNTRIES_STORAGE_NAME) === null || localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME) === null){
+                    const data = await getCountryCodesApi();
+                    localStorage.setItem(VUE_APP_COUNTRIES_STORAGE_NAME, data);
+                    localStorage.setItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME, data[0]);
+                }
                 const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
                 this.$router.push(`/${country}`);
             }
             catch(error){
                 handleErrorMessage(error);
+            }
+        },
+        async fetchCountryCodes() {
+            try {
+                if(localStorage.getItem(VUE_APP_COUNTRIES_STORAGE_NAME) === null || localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME) === null){
+                const data = await getCountryCodesApi();
+                localStorage.setItem(VUE_APP_COUNTRIES_STORAGE_NAME, data);
+                localStorage.setItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME, data[0]);
+                }
+            }
+            catch (error) {
+                console.log(error);
             }
         }
     }

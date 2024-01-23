@@ -5,12 +5,13 @@ import PageNotFound from './pages/NotFoundPage.vue'
 import EditParameterPage from './pages/EditParameterPage.vue'
 import { getAuth } from "firebase/auth";
 import app from './firebase.js'
-import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env.js'
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME, VUE_APP_COUNTRIES_STORAGE_NAME } from '@/env-variables/env.js'
+import { getCountryCodesApi } from "./api-functions/ApiFunctions.js"
 
 let auth;
 const routes = [
   {
-    path: '/login',
+    path: '/signin',
     name: 'Login',
     component: LoginPage
   },
@@ -63,7 +64,7 @@ router.beforeEach(async(to, from, next) => {
       next()    
     }
     // redirect to the login page
-    next('/login')
+    next('/signin')
   } else {
     // proceed to the requested route
     next()
