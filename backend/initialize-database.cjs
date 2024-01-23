@@ -3,6 +3,7 @@ const { arrayToObject } = require('./helperFunctions.cjs');
 const { serviceAccount, databaseURL } = require('./firebaseConfig.cjs');
 const { countryCodesArray } = require('./firebaseConfig.cjs');
 const countryCodes = {countryCodes: countryCodesArray};
+require('dotenv').config();
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
@@ -13,7 +14,7 @@ admin.initializeApp({
 // Get a reference to the root of your database
 const db = admin.database();
 const rootRef = db.ref();
-const projectId = 'case-study-241cf';
+const projectId = process.env.PROJECT_NAME;
 
 var dummyUsers = [
   { email: 'user1@example.com', password: 'password1' },
