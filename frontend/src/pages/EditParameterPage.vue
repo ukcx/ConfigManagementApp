@@ -14,7 +14,7 @@ import DesktopViewEdit from '../components/DesktopViewEdit.vue'
 import MobileViewEdit from '../components/MobileViewEdit.vue'
 import Spinner from '../components/Spinner.vue'
 import Header from '../components/Header.vue'
-import { fetchOneConfigVariableApi, handleSignoutApi } from '../api-functions/ApiFunctions.js'
+import { fetchOneConfigVariableApi, handleSignoutApi, handleErrorMessage } from '../api-functions/ApiFunctions.js'
 import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 
 
@@ -50,7 +50,7 @@ export default {
                 this.$router.push('/login');
             }
             catch(error){
-                console.log(error);
+                handleErrorMessage(error);
             }
         },
         handleCountryChange(){
@@ -65,7 +65,7 @@ export default {
                 const response = await fetchOneConfigVariableApi(key, country);
                 this.data = response;
             }catch(error){
-                console.log(error);
+                handleErrorMessage(error);
             }
         }
     }

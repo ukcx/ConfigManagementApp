@@ -8,5 +8,13 @@ module.exports = {
           return {...accumulator, [value]: val};
         }, {});
         return obj;
-      }
+      },
+      trimObjectValues: (obj) => {
+        for (let key in obj) {
+            if (typeof obj[key] === 'string') {
+                obj[key] = obj[key].trim();
+            }
+        }
+        return obj;
+    }
 }

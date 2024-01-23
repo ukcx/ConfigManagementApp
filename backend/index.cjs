@@ -3,7 +3,7 @@ const cors = require('cors');
 const admin = require('firebase-admin');
 const { check, validationResult } = require('express-validator');
 require('dotenv').config();
-const { arrayToObject } = require('./helperFunctions.cjs');
+const { arrayToObject, trimObjectValues } = require('./helperFunctions.cjs');
 const { countryCodesArray } = require('./firebaseConfig.cjs');
 const countryCodes = countryCodesArray;
 
@@ -118,7 +118,7 @@ app.post('/:projectId', validateFirebaseToken, [
     }
 
     const { projectId } = req.params;
-    const projectParameters = req.body;
+    const projectParameters = trimObjectValues(req.body);
 
     // Get a reference to the parameter in the database
     const parameterRef = admin.database().ref(`/projects/${projectId}/${projectParameters.key}`);
@@ -155,7 +155,8 @@ app.post('/:projectId', validateFirebaseToken, [
 app.put('/:projectId/:countryCode', validateFirebaseToken, [
   check('key').not().isEmpty()
 ], async (req, res) => {
-  const processString = getProcessString(req.params.projectId, req.params.countryCode, req.body.key);
+  const projectParameters = trimObjectValues(req.body);
+  const processString = getProcessString(req.params.projectId, req.params.countryCode, projectParameters.key);
   console.log(processString);
     try {
       // Finds the validation errors in this request and wraps them in an object with handy functions
@@ -165,7 +166,6 @@ app.put('/:projectId/:countryCode', validateFirebaseToken, [
       }
 
       const { projectId, countryCode } = req.params;
-      const projectParameters = req.body;
       
       if(!await validateCountryCode(countryCode)) {
         return res.status(404).json({ error: 'Country code not found' });
@@ -216,7 +216,8 @@ app.delete('/:projectId', validateFirebaseToken, [
         return res.status(400).json({ errors: errors.array() });
       }
       const { projectId } = req.params;
-      const { key } = req.body;
+      const projectParameters = trimObjectValues(req.body);
+      const key = projectParameters.key;
   
       // Get a reference to the parameter in the database
       const parameterRef = admin.database().ref(`/projects/${projectId}/${key}`);

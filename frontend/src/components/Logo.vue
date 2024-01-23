@@ -7,6 +7,6 @@ export default {
 </script>
 
 <template>
-    <img class="logo" src="../assets/icon.png" alt="Example Logo" />
+    <img class="logo" src="../assets/icon.png" alt="Logo" />
 </template>
 

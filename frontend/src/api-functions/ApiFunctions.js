@@ -270,3 +270,17 @@ export async function getCountryCodesApi(){
         }
     })
 }
+
+export function handleErrorMessage (error) {
+    if(error.response && error.response.hasOwnProperty('data')){
+        if(Array.isArray(error.response.data.error)){
+            alert(error.response.data.error[0].msg);
+        }
+        else{
+            alert(error.response.data.error);
+        }
+    }
+    else{
+        alert(error.message);
+    }
+}

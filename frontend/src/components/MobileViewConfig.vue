@@ -48,7 +48,7 @@
 <script>
 import ButtonSmall from '../components/ButtonSmall.vue'
 import TextBox from '../components/TextBox.vue'
-import { deleteItemApi, addNewParameterApi } from '@/api-functions/ApiFunctions';
+import { deleteItemApi, addNewParameterApi, handleErrorMessage } from '@/api-functions/ApiFunctions';
 import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 
 export default {
@@ -81,7 +81,7 @@ export default {
                 this.clearTextboxes();
                 this.$emit('dataChanged');
             }catch(error){
-                console.log(error);
+                handleErrorMessage(error);
             }
         },
         async deleteItem(itemId) {
@@ -89,7 +89,7 @@ export default {
                 const response = await deleteItemApi(itemId);
                 this.$emit('dataChanged');
             }catch(error){
-                console.log(error);
+                handleErrorMessage(error);
             }
         },
         clearTextboxes(){

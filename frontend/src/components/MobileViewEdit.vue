@@ -26,7 +26,7 @@
 import ButtonSmall from '../components/ButtonSmall.vue'
 import TextBox from '../components/TextBox.vue'
 import Checkbox from '../components/Checkbox.vue'
-import { editParameterApi } from '@/api-functions/ApiFunctions';
+import { editParameterApi, handleErrorMessage } from '@/api-functions/ApiFunctions';
 import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 export default {
     name: 'MobileViewEdit',
@@ -75,7 +75,7 @@ export default {
                 const response = await editParameterApi(this.data["key"], this.new_value, this.new_description, country);
                 this.$router.push('/' + country);
             }catch(error){
-                console.log(error);
+                handleErrorMessage(error);
             }
         },
         inputChangedValue(){

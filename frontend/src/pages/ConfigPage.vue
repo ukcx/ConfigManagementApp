@@ -16,7 +16,7 @@ import Header from '../components/Header.vue'
 import Spinner from '../components/Spinner.vue'
 import { onMounted } from 'vue'
 import app from '../firebase.js'
-import { fetchAllConfigVariablesApi, handleSignoutApi } from '../api-functions/ApiFunctions.js'
+import { fetchAllConfigVariablesApi, handleSignoutApi, handleErrorMessage } from '../api-functions/ApiFunctions.js'
 import { getAuth } from 'firebase/auth'
 import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 
@@ -57,7 +57,7 @@ export default {
                 this.$router.push('/login');
             }
             catch(error){
-                console.log(error);
+                handleErrorMessage(error);
             }
         },
         handleCountryChange(){
@@ -73,11 +73,11 @@ export default {
                 this.dataReady = true;
             }
             catch(error){
-                console.log(error);
+                handleErrorMessage(error);
             }
         },
         updateToSortedData(newData){
-            this.myData = newData;
+            this.data = newData;
         }
     }
 }

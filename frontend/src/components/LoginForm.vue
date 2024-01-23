@@ -24,7 +24,7 @@
 <script>
 import TextBox from './TextBox.vue'
 import Button from './Button.vue'
-import { handleLoginApi, handleLoginTokenExchange } from '@/api-functions/ApiFunctions';
+import { handleLoginApi, handleLoginTokenExchange, handleErrorMessage } from '@/api-functions/ApiFunctions';
 import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 export default {
     name: 'LoginForm',
@@ -48,7 +48,7 @@ export default {
                 this.$router.push(`/${country}`);
             }
             catch(error){
-                alert(error.message);
+                handleErrorMessage(error);
             }
         }
     }
