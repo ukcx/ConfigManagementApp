@@ -29,13 +29,13 @@
         <div class="card">
             <form @submit.prevent="addNewParameter" class="mobile-form">
                 <div class="row-input-cell">
-                    <TextBox id="new_parameter" type="text" placeholder="New Parameter Name" v-model="new_parameter" required="true"></TextBox>
+                    <TextBox ref="keyTextBox" id="new_parameter" type="text" placeholder="New Parameter Name" v-model="new_parameter" required="true"></TextBox>
                 </div>
                 <div class="row-input-cell">
-                    <TextBox id="value" type="text" placeholder="Value" v-model="value" required="true"></TextBox>
+                    <TextBox ref="valueTextBox" id="value" type="text" placeholder="Value" v-model="value" required="true"></TextBox>
                 </div>
                 <div class="row-input-cell">
-                    <TextBox id="new_description" type="text" placeholder="Description" v-model="new_description" required="true"></TextBox>
+                    <TextBox ref="descTextBox" id="new_description" type="text" placeholder="Description" v-model="new_description" required="true"></TextBox>
                 </div>
                 <div class="row-button-cell">
                     <ButtonSmall type="submit" color="secondary">Add</ButtonSmall>
@@ -49,6 +49,7 @@
 import ButtonSmall from '../components/ButtonSmall.vue'
 import TextBox from '../components/TextBox.vue'
 import { deleteItemApi, addNewParameterApi } from '@/api-functions/ApiFunctions';
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 
 export default {
     name: 'MobileViewConfig',
@@ -71,12 +72,13 @@ export default {
     },
     methods: {        
         editItem(parameterKey){
-            const country = localStorage.getItem('chosenCountry');
+            const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
             this.$router.push(`/${country}/edit/${parameterKey}`);
         },
         async addNewParameter() {
             try{
                 const response = await addNewParameterApi(this.new_parameter, this.value, this.new_description);
+                this.clearTextboxes();
                 this.$emit('dataChanged');
             }catch(error){
                 console.log(error);
@@ -89,6 +91,14 @@ export default {
             }catch(error){
                 console.log(error);
             }
+        },
+        clearTextboxes(){
+            this.$refs.keyTextBox.clearInput();
+            this.$refs.valueTextBox.clearInput();
+            this.$refs.descTextBox.clearInput();
+            this.new_parameter = '';
+            this.value = '';
+            this.new_description = '';
         }
     }
 }

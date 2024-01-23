@@ -26,6 +26,7 @@
 
 <script>
 import Logo from '../components/Logo.vue'
+import { VUE_APP_COUNTRIES_STORAGE_NAME, VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 export default {
     name: 'Header',
     components: {
@@ -40,9 +41,9 @@ export default {
         }
     },
     created() {
-        this.countries = localStorage.getItem('countries').split(',');
+        this.countries = localStorage.getItem(VUE_APP_COUNTRIES_STORAGE_NAME).split(',');
         console.log(this.countries);
-        this.chosenCountry = localStorage.getItem('chosenCountry');
+        this.chosenCountry = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
         console.log(this.chosenCountry);
     },
     methods: {
@@ -57,7 +58,7 @@ export default {
         },
         handleCountryChange(country) {
             this.chosenCountry = country;
-            localStorage.setItem('chosenCountry', country);
+            localStorage.setItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME, country);
             this.$emit('countryChanged', country);
             this.$emit('dataChanged', country);
         },

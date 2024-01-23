@@ -2,10 +2,11 @@ import { getAuth } from 'firebase/auth'
 import app from '../firebase.js'
 import axios from 'axios'
 import { signOut, signInWithEmailAndPassword } from 'firebase/auth'
+import { VUE_APP_PROJECT_NAME, VUE_APP_SERVER_URL, VUE_APP_TOKEN_STORAGE_NAME } from '@/env-variables/env.js'
 
-const token_storage_name = "api_token";
-const projectName = "case-study-241cf";
-const serverUrl = "http://localhost:3000";
+const token_storage_name = VUE_APP_TOKEN_STORAGE_NAME;
+const projectName = VUE_APP_PROJECT_NAME;
+const serverUrl = VUE_APP_SERVER_URL;
 
 export async function fetchAllConfigVariablesApi(cc){
     return new Promise((resolve, reject) => {
@@ -163,8 +164,6 @@ export async function addNewParameterApi(key, value, description) {
 
 export function handleSignoutApi(){
     const auth = getAuth(app);
-    
-    console.log("signout");
     signOut(auth).then(() => {
         console.log("signout success");
         localStorage.removeItem(token_storage_name);

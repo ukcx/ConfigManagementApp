@@ -14,15 +14,9 @@ import DesktopViewEdit from '../components/DesktopViewEdit.vue'
 import MobileViewEdit from '../components/MobileViewEdit.vue'
 import Spinner from '../components/Spinner.vue'
 import Header from '../components/Header.vue'
-import { onMounted } from 'vue'
-import { getAuth } from 'firebase/auth'
-import app from '../firebase.js'
 import { fetchOneConfigVariableApi, handleSignoutApi } from '../api-functions/ApiFunctions.js'
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 
-let auth;
-onMounted(() => {
-    auth = getAuth(app);
-});
 
 export default {
     name: 'EditParameterPage',
@@ -60,14 +54,14 @@ export default {
             }
         },
         handleCountryChange(){
-            const country = localStorage.getItem('chosenCountry');
+            const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
             this.$router.push('/' + country + "/edit/" + this.$route.params.parameterKey);
             this.fetchData();
         },
         async fetchData(){
             try{
                 const key = this.$route.params.parameterKey;
-                const country = localStorage.getItem('chosenCountry');
+                const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
                 const response = await fetchOneConfigVariableApi(key, country);
                 this.data = response;
             }catch(error){

@@ -24,9 +24,8 @@
 <script>
 import TextBox from './TextBox.vue'
 import Button from './Button.vue'
-import { useRouter } from 'vue-router';
 import { handleLoginApi, handleLoginTokenExchange } from '@/api-functions/ApiFunctions';
-const router = useRouter();
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 export default {
     name: 'LoginForm',
     components: {
@@ -45,7 +44,7 @@ export default {
             try{
                 await handleLoginApi(this.email, this.password);
                 await handleLoginTokenExchange();
-                const country = localStorage.getItem('chosenCountry');
+                const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
                 this.$router.push(`/${country}`);
             }
             catch(error){

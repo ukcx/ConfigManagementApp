@@ -18,6 +18,7 @@ import { onMounted } from 'vue'
 import app from '../firebase.js'
 import { fetchAllConfigVariablesApi, handleSignoutApi } from '../api-functions/ApiFunctions.js'
 import { getAuth } from 'firebase/auth'
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 
 let auth;
 onMounted(() => {
@@ -60,13 +61,13 @@ export default {
             }
         },
         handleCountryChange(){
-            const country = localStorage.getItem('chosenCountry');
+            const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
             this.$router.push('/' + country);
             this.fetchData();
         },
         async fetchData(){
             try{
-                const country = localStorage.getItem('chosenCountry');
+                const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
                 const data = await fetchAllConfigVariablesApi(country);
                 this.data = Object.entries(data);
                 this.dataReady = true;

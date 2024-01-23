@@ -5,6 +5,7 @@ import PageNotFound from './pages/NotFoundPage.vue'
 import EditParameterPage from './pages/EditParameterPage.vue'
 import { getAuth } from "firebase/auth";
 import app from './firebase.js'
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env.js'
 
 let auth;
 const routes = [
@@ -15,7 +16,7 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/' + localStorage.getItem('chosenCountry'),
+    redirect: '/' + localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME),
   },
   {
     path: '/:cc',

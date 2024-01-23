@@ -47,6 +47,7 @@
 import ButtonSmall from '../components/ButtonSmall.vue'
 import TextBox from '../components/TextBox.vue'
 import { deleteItemApi, addNewParameterApi } from '@/api-functions/ApiFunctions';
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 
 export default {
     name: 'DesktopViewConfig',
@@ -70,17 +71,26 @@ export default {
     },
     methods: {
         editItem(parameterKey){
-            const country = localStorage.getItem('chosenCountry');
+            const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
             this.$router.push( `/${country}/edit/${parameterKey}` );
         },
         async addNewParameter() {
             try{
                 const response = await addNewParameterApi(this.new_parameter, this.value, this.new_description);
+                this.clearTextboxes();
                 this.$emit('dataChanged');
             }catch(error){
                 console.log(error);
             }
             
+        },
+        clearTextboxes(){
+            this.$refs.keyTextBox.clearInput();
+            this.$refs.valueTextBox.clearInput();
+            this.$refs.descTextBox.clearInput();
+            this.new_parameter = '';
+            this.value = '';
+            this.new_description = '';
         },
         async deleteItem(itemId) {
             try{

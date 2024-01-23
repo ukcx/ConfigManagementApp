@@ -49,6 +49,16 @@ export default {
         };
         },
     },
+    methods: {
+        clearInput() {
+            this.inputValue = '';
+        }
+    },
+    watch: {
+        value(newVal) {
+            this.inputValue = newVal;
+        }
+    }
 }
 </script>
 

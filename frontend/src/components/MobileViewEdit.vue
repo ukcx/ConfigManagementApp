@@ -27,7 +27,7 @@ import ButtonSmall from '../components/ButtonSmall.vue'
 import TextBox from '../components/TextBox.vue'
 import Checkbox from '../components/Checkbox.vue'
 import { editParameterApi } from '@/api-functions/ApiFunctions';
-const projectName = "case-study-241cf"
+import { VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME } from '@/env-variables/env';
 export default {
     name: 'MobileViewEdit',
     components: {
@@ -70,7 +70,7 @@ export default {
         },
         async editParameter(){
             try{
-                const country = localStorage.getItem('chosenCountry');
+                const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
                 this.assignVariables();
                 const response = await editParameterApi(this.data["key"], this.new_value, this.new_description, country);
                 this.$router.push('/' + country);
