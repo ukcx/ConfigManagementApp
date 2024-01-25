@@ -1,4 +1,4 @@
-## Configuration Management App
+# Configuration Management App
 
 This is a full-stack web application that allows users to manage a project's configuration parameters. The application has a configuration management panel where users can log in and update, delete, or add parameters to a project. There is also division of data storage between different country codes, so that users can see, or update parameters for one selected country. 
 This application is built using the Vue3JS framework for front-end and uses a Firestore Database to store the project's parameters. The application also has a REST API for serving these configuration parameters. The authentication is handled by Firebase Authentication. For mobile users and a pre-defined api token is specified for fetching parameter values. Backend is built using NodeJS and ExpressJS. 
@@ -7,15 +7,21 @@ This application is built using the Vue3JS framework for front-end and uses a Fi
 
 **The authenticated account:** email: user1@example.com  password: password1
 
-### API endpoints for panel users
+## API endpoints for panel users
+These endpoints require the user to be authenticated. Authentication is done using Firebase Authentication. The user should be logged in to the application and the firebase authentication token should be passed in the request header as follows:
+```javascript
+{
+  Authorization: <firebase authentication token>
+}
+```
 
-#### GET /parameters/cc/:countryCode?
+### GET /parameters/cc/:countryCode?
 This endpoint returns the parameters with the value for the specified country code. If no country code is specified, it returns the parameters with the default value.
 
-#### GET /parameters/:parameterName/:countryCode?
+### GET /parameters/:parameterName/:countryCode?
 This endpoint returns the value of the specified parameter for the specified country code. If no country code is specified, it returns the parameter with the default value.
 
-#### POST /parameters
+### POST /parameters
 This endpoint allows the user to add a new parameter to the database. The request body should contain the following fields:
 ```javascript
 {
@@ -26,7 +32,7 @@ This endpoint allows the user to add a new parameter to the database. The reques
 ```
 The parameter is added to the database with the specified value for all country codes.
 
-#### PUT /parameters
+### PUT /parameters
 This endpoint allows the user to update the value of an existing parameter in the database. The request body should contain the following fields:
 ```javascript
 {
@@ -37,7 +43,7 @@ This endpoint allows the user to update the value of an existing parameter in th
 ```
 The parameter is updated in the database with the specified value for the specified country code.
 
-#### DELETE /parameters
+### DELETE /parameters
 This endpoint allows the user to delete an existing parameter from the database. The request body should contain the following fields:
 ```javascript
 {
@@ -46,15 +52,15 @@ This endpoint allows the user to delete an existing parameter from the database.
 ```
 The parameter is deleted from the database for all country codes.
 
-#### GET /countryCodes
+### GET /countryCodes
 This endpoint returns the list of country codes that are present in the database.
 
-### API endpoints for mobile users
+## API endpoints for mobile users
 
-#### GET /fetchApiToken
+### GET /fetchApiToken
 This endpoint returns the api token that is used for fetching parameter values for mobile.
 
-#### GET /parametersKeyValue/:countryCode?
+### GET /parametersKeyValue/:countryCode?
 This endpoint returns the parameters with the value for the specified country code. If no country code is specified, it returns the parameters with the default value. The response is in the following format:
 ```javascript
 {
@@ -66,7 +72,7 @@ This endpoint returns the parameters with the value for the specified country co
 The response is in the form of a key-value pair. The parameter name is the key and the parameter value is the value.
 
 
-### Project setup in local
+## Project setup in local
 Create a firebase project and add a firestore database to it.
 From the authentication tab, enable email/password authentication.
 
@@ -74,7 +80,7 @@ From certain tabs of firebase, find and store the following information:
 1. From the project settings, add a web app and copy the firebaseConfig object.
 2. From the project settings, add a service account and download the json file. (Click on generate new private key) 
 
-#### Backend setup
+### Backend setup
 Go to the backend directory and run the following command:
 ```
 npm install
@@ -117,7 +123,7 @@ Now, the backend is ready to run. Run the following command inside the /backend 
 npm start
 ```
 
-#### Frontend setup
+### Frontend setup
 Go to the frontend directory and run the following command:
 ```
 npm install
