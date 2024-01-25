@@ -7,6 +7,65 @@ This application is built using the Vue3JS framework for front-end and uses a Fi
 
 **The authenticated account:** email: user1@example.com  password: password1
 
+### API endpoints for panel users
+
+#### GET /parameters/cc/:countryCode?
+This endpoint returns the parameters with the value for the specified country code. If no country code is specified, it returns the parameters with the default value.
+
+#### GET /parameters/:parameterName/:countryCode?
+This endpoint returns the value of the specified parameter for the specified country code. If no country code is specified, it returns the parameter with the default value.
+
+#### POST /parameters
+This endpoint allows the user to add a new parameter to the database. The request body should contain the following fields:
+```javascript
+{
+  key: <parameter name>,
+  value: <parameter value>,
+  description: <parameter description>
+}
+```
+The parameter is added to the database with the specified value for all country codes.
+
+#### PUT /parameters
+This endpoint allows the user to update the value of an existing parameter in the database. The request body should contain the following fields:
+```javascript
+{
+  key: <parameter name>,
+  value: <parameter value>,
+  countryCode: <country code>
+}
+```
+The parameter is updated in the database with the specified value for the specified country code.
+
+#### DELETE /parameters
+This endpoint allows the user to delete an existing parameter from the database. The request body should contain the following fields:
+```javascript
+{
+  key: <parameter name>
+}
+```
+The parameter is deleted from the database for all country codes.
+
+#### GET /countryCodes
+This endpoint returns the list of country codes that are present in the database.
+
+### API endpoints for mobile users
+
+#### GET /fetchApiToken
+This endpoint returns the api token that is used for fetching parameter values for mobile.
+
+#### GET /parametersKeyValue/:countryCode?
+This endpoint returns the parameters with the value for the specified country code. If no country code is specified, it returns the parameters with the default value. The response is in the following format:
+```javascript
+{
+  <parameter name>: <parameter value>,
+  <parameter name>: <parameter value>,
+  ...
+}
+```
+The response is in the form of a key-value pair. The parameter name is the key and the parameter value is the value.
+
+
 ### Project setup in local
 Create a firebase project and add a firestore database to it.
 From the authentication tab, enable email/password authentication.
