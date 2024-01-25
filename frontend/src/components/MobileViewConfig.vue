@@ -1,5 +1,12 @@
 <template>
     <div class="content-card">
+        <div class="content-card-header">
+            <ButtonSmall @click="sortByCreateDate()" type="button" color="primary">
+                Sort By Create Date
+                <i v-if="sortAsc" class="pi pi-arrow-down"></i>
+                <i v-else class="pi pi-arrow-up"></i>
+            </ButtonSmall>
+        </div>
         <div class="card" v-for="(item, index) in data" :key="item[0]">
             <div class="row">
                 <p class="bold">Parameter Key: </p>
@@ -67,7 +74,8 @@ export default {
         return {
             new_parameter: '',
             value: '',
-            new_description: ''
+            new_description: '',
+            sortAsc: true
         }
     },
     methods: {        
@@ -99,11 +107,30 @@ export default {
             this.new_parameter = '';
             this.value = '';
             this.new_description = '';
+        },
+        sortByCreateDate(){
+            this.sortAsc = !this.sortAsc;
+            let sortedData = null;
+            if(this.sortAsc){
+                sortedData = this.data.sort((a, b) => (a[1]["createDate"] > b[1]["createDate"]) ? 1 : -1);
+            }
+            else{
+                sortedData = this.data.sort((a, b) => (a[1]["createDate"] < b[1]["createDate"]) ? 1 : -1);
+            }
+            console.log(sortedData);
+            this.$emit('updateData', sortedData);      
         }
     }
 }
 </script>
 
 <style>
-
+.content-card-header {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    margin-bottom: 10px;
+}
 </style>

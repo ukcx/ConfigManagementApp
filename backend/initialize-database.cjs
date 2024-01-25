@@ -2,19 +2,18 @@ const admin = require('firebase-admin');
 const { arrayToObject } = require('./helperFunctions.cjs');
 const { serviceAccount, databaseURL } = require('./firebaseConfig.cjs');
 const { countryCodesArray } = require('./firebaseConfig.cjs');
+const { getFirestore } = require('firebase-admin/firestore');
 const countryCodes = {countryCodes: countryCodesArray};
 require('dotenv').config();
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: databaseURL,
+  //databaseURL: databaseURL,
 });
 
 // Get a reference to the root of your database
-const db = admin.database();
-const rootRef = db.ref();
-const projectId = process.env.PROJECT_NAME;
+const db = getFirestore();
 
 var dummyUsers = [
   { email: 'user1@example.com', password: 'password1' },
@@ -23,7 +22,6 @@ var dummyUsers = [
 
 // Update parameters for the specified project
 const dateNow = Date.now();
-//format now as a date
 const now = new Date(dateNow).toISOString();
 
 const dummyProjectParameters = [
@@ -78,51 +76,38 @@ const dummyProjectParameters = [
   }
 ];
 
-// Write the dummy data to the database
-// const createDatabase = async() => {
-//   return new Promise((resolve, reject) => {
-//     rootRef.set(databaseSkeleton, (error) => {
-//       if (error) {
-//         console.error('Error writing dummy data to the database:', error);
-//         reject(error);
-//       } else {
-//         console.log('Dummy data has been successfully written to the database.');
-//         resolve();
-//       }
-//     });
-//   });
-// } 
-
 const addCountryCodes = async() => {
-  return new Promise((resolve, reject) => {
-    rootRef.set(countryCodes, (error) => {
-      if (error) {
-        console.error('Error writing country codes to the database:', error);
-        reject(error);
-      } else {
-        console.log('Country codes data has been successfully written to the database.');
-        resolve();
-      }
+  return db.collection('countryCodes').doc('countryCodes').set(countryCodes)
+    .then(() => {
+      console.log('Country codes data has been successfully written to the database.');
+    })
+    .catch((error) => {
+      console.error('Error writing country codes to the database:', error);
+      throw error; // This will reject the promise returned by addCountryCodes
     });
-  });
-} 
+};
+
   // Write the updated data to the database
-  const addDummyProjects = async(dummyParameters) => {
+  const addDummyParameters = async(dummyParameters) => {
     return new Promise((resolve, reject) => {
-      // Get a reference to the project in the database
-      const projectRef = admin.database().ref(`/projects/${projectId}`);
       dummyParameters.forEach((parameter) => {
-        // Create a new child with a specified key
-        const newParameterRef = projectRef.child(parameter.key);
-        newParameterRef.set(parameter, (error) => {
-          if (error) {
-            console.error('Error updating project parameters:', error);
-            reject(error);
-          } else {
-            console.log('Project parameters updated successfully.');
+        const { key, value, description, createDate, lastUpdateDate } = parameter;
+        console.log(value)
+        db.collection('parameters').doc(key).set({
+          description: description,
+          createDate: createDate,
+          lastUpdateDate: lastUpdateDate,
+          value: value,
+          key: key
+        })
+          .then(() => {
+            console.log('Dummy parameters have been successfully written to the database.');
             resolve();
-          }
-        });
+          })
+          .catch((error) => {
+            console.error('Error writing dummy parameters to the database:', error);
+            reject(error);
+          });
       });
     });
   };
@@ -145,17 +130,26 @@ const addCountryCodes = async() => {
     }
   };
   
-  const authenticateUsersAndAddProjects = async (dummyParameters, users) => {
+  const initializeDatabase = async (dummyParameters, users) => {
     try {
       await addCountryCodes();
-      await addDummyProjects(dummyParameters);
+      await addDummyParameters(dummyParameters);
       const userPromises = users.map(user => authenticateOneUser(user));
       await Promise.all(userPromises);
+      // const newParameter = {
+      //   value: "arrayToObject(countryCodes, projectParameters.value, false)",
+      //   description: "projectParameters.description",
+      //   key: "projectParameters.key",
+      //   createDate: new Date(Date.now()).toISOString(),
+      //   lastUpdateDate: new Date(Date.now()).toISOString()
+      // };
+      // await db.collection('parameters').doc("dsadsasd").set(newParameter);
+      
       await admin.app().delete();
     } 
     catch (error) {
-      console.error('Error authenticating dummy users', error.message);
+      console.error('Error initializing database', error.message);
     }
   };
   
-  authenticateUsersAndAddProjects(dummyProjectParameters, dummyUsers);
+  initializeDatabase(dummyProjectParameters, dummyUsers);

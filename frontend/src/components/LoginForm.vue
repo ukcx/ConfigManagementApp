@@ -43,7 +43,7 @@ export default {
         async login() {
             try{
                 await handleLoginApi(this.email, this.password);
-                await handleLoginTokenExchange();
+                //await handleLoginTokenExchange();
                 if(localStorage.getItem(VUE_APP_COUNTRIES_STORAGE_NAME) === null || localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME) === null){
                     const data = await getCountryCodesApi();
                     localStorage.setItem(VUE_APP_COUNTRIES_STORAGE_NAME, data);
@@ -59,9 +59,9 @@ export default {
         async fetchCountryCodes() {
             try {
                 if(localStorage.getItem(VUE_APP_COUNTRIES_STORAGE_NAME) === null || localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME) === null){
-                const data = await getCountryCodesApi();
-                localStorage.setItem(VUE_APP_COUNTRIES_STORAGE_NAME, data);
-                localStorage.setItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME, data[0]);
+                    const data = await getCountryCodesApi();
+                    localStorage.setItem(VUE_APP_COUNTRIES_STORAGE_NAME, data);
+                    localStorage.setItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME, "DEFAULT");
                 }
             }
             catch (error) {

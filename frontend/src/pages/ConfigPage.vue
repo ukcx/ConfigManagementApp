@@ -70,6 +70,7 @@ export default {
                 const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
                 const data = await fetchAllConfigVariablesApi(country);
                 this.data = Object.entries(data);
+                console.log(this.data);
                 this.dataReady = true;
             }
             catch(error){
@@ -91,7 +92,7 @@ export default {
     background-color: inherit;
 }
 .page-body{
-    padding-top:5vh;
+    padding-top:0vh;
     display: flex;
     height: 100%;
     width: 100%;

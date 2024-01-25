@@ -64,6 +64,7 @@ export default {
                 const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
                 const response = await fetchOneConfigVariableApi(key, country);
                 this.data = response;
+                console.log(this.data);
             }catch(error){
                 handleErrorMessage(error);
             }
