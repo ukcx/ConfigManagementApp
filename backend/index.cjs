@@ -88,7 +88,8 @@ const validateCountryCode = async (cc)=>{
 
 // Middleware to validate Firebase ID token
 const validateFirebaseToken = async (req, res, next) => {
-  const idToken = req.headers.authorization;
+  let idToken = req.headers.authorization;
+  idToken = idToken.replace('Bearer ', '');
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedToken;
@@ -100,7 +101,8 @@ const validateFirebaseToken = async (req, res, next) => {
 };
 
 const validateAPIToken = async (req, res, next) => {
-  const apiToken = req.headers.authorization;
+  let apiToken = req.headers.authorization;
+  apiToken = apiToken.replace('Bearer ', '');
   try {
     if(apiToken === process.env.API_TOKEN) {
       next();

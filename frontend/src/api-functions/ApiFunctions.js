@@ -14,7 +14,7 @@ export async function fetchAllConfigVariablesApi(cc){
             .then(idToken => {
                 axios.get(`${serverUrl}/parameters/cc/${cc}`, {    
                     headers:{
-                        Authorization: `${idToken}`
+                        Authorization: `Bearer ${idToken}`
                     },
                     data:    {
                         countryCode: cc
@@ -47,7 +47,7 @@ export async function fetchOneConfigVariableApi(key, cc){
             .then(idToken => {
                 axios.get(`${serverUrl}/parameters/${key}/${cc}`, {    
                     headers:{
-                        Authorization: `${idToken}`
+                        Authorization: `Bearer ${idToken}`
                     }               
                     }
                 ).then(response => {
@@ -81,7 +81,7 @@ export async function editParameterApi(key, value, description, cc){
                 },
                 {
                     headers:{
-                        Authorization: `${idToken}`
+                        Authorization: `Bearer ${idToken}`
                     }
                 }).then(response => {
                     console.log(response.data);
@@ -110,7 +110,7 @@ export async function deleteItemApi(itemId) {
                 axios.delete(`${serverUrl}/parameters`, {
                     headers:{
                         'Content-Type': 'application/json',
-                        Authorization: `${idToken}`
+                        Authorization: `Bearer ${idToken}`
                     },
                     data: JSON.stringify({key: itemId})
                 }).then(response => {
@@ -143,7 +143,7 @@ export async function addNewParameterApi(key, value, description) {
                     },
                     {
                         headers:{
-                            Authorization: `${idToken}`
+                            Authorization: `Bearer ${idToken}`
                         }
                     }
                 ).then(response => {
@@ -219,7 +219,7 @@ export async function handleLoginTokenExchange() {
                 axios.post(`${serverUrl}/fetchApiToken`, {},
                     {
                         headers:{
-                            Authorization: `${idToken}`
+                            Authorization: `Bearer ${idToken}`
                         }
                     }
                 ).then(response => {
@@ -252,7 +252,7 @@ export async function getCountryCodesApi(){
             
             axios.get(`${serverUrl}/countryCodes`, {    
                 // headers:{
-                //     Authorization: `${token}`
+                //     Authorization: `Bearer ${token}`
                 // }                        
                 }
             ).then(response => {

@@ -11,7 +11,7 @@ This application is built using the Vue3JS framework for front-end and uses a Fi
 These endpoints require the user to be authenticated. Authentication is done using Firebase Authentication. The user should be logged in to the application and the firebase authentication token should be passed in the request header as follows:
 ```javascript
 {
-  Authorization: <firebase authentication token>
+  Authorization: Bearer <firebase authentication token>
 }
 ```
 
@@ -70,7 +70,12 @@ This endpoint returns the parameters with the value for the specified country co
 }
 ```
 The response is in the form of a key-value pair. The parameter name is the key and the parameter value is the value.
-
+This endpoint requires the api token in request header.
+```javascript
+{
+  Authorization: Bearer <api token>
+}
+```
 
 ## Project setup in local
 Create a firebase project and add a firestore database to it.
