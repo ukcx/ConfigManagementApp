@@ -1,7 +1,6 @@
 const admin = require('firebase-admin');
-const { arrayToObject } = require('./helperFunctions.cjs');
-const { serviceAccount, databaseURL } = require('./firebaseConfig.cjs');
-const { countryCodesArray } = require('./firebaseConfig.cjs');
+const { arrayToObject } = require('./shared/helperFunctions.cjs');
+const { serviceAccount, countryCodesArray } = require('./config/firebaseConfig.cjs');
 const { getFirestore } = require('firebase-admin/firestore');
 const countryCodes = {countryCodes: countryCodesArray};
 require('dotenv').config();

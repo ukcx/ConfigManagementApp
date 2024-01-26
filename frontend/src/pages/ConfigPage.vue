@@ -3,8 +3,8 @@
         <Header @countryChanged="handleCountryChange" @dataChanged="fetchData"  @signOutFunction="handleSignout"></Header>
         <div class="page-body">
             <Spinner v-if="!dataReady"></Spinner>
-            <MobileViewConfig v-else-if="isMobile" :data="data" @dataChanged="fetchData"/>
-            <DesktopViewConfig v-else :data="data" @updateData="updateToSortedData" @dataChanged="fetchData"/>
+            <MobileViewConfig v-else-if="isMobile" :data="data" @sortData="updateToSortedData" @dataChanged="fetchData"/>
+            <DesktopViewConfig v-else :data="data" @sortData="updateToSortedData" @dataChanged="fetchData"/>
         </div>
     </div>
 </template>
@@ -64,12 +64,14 @@ export default {
             const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
             this.$router.push('/' + country);
             this.fetchData();
+            this.updateToSortedData(true);
         },
         async fetchData(){
             try{
                 const country = localStorage.getItem(VUE_APP_CHOSEN_COUNTRY_STORAGE_NAME);
                 const data = await fetchAllConfigVariablesApi(country);
                 this.data = Object.entries(data);
+                this.updateToSortedData(true);
                 console.log(this.data);
                 this.dataReady = true;
             }
@@ -77,8 +79,16 @@ export default {
                 handleErrorMessage(error);
             }
         },
-        updateToSortedData(newData){
-            this.data = newData;
+        updateToSortedData(ascending){
+            let sortedData = null;
+            if(ascending){
+                sortedData = this.data.sort((a, b) => (a[1]["createDate"] > b[1]["createDate"]) ? 1 : -1);
+            }
+            else{
+                sortedData = this.data.sort((a, b) => (a[1]["createDate"] < b[1]["createDate"]) ? 1 : -1);
+            }
+            console.log(sortedData);
+            this.data = sortedData;
         }
     }
 }
