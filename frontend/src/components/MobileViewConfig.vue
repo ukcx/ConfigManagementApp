@@ -110,7 +110,7 @@ export default {
         },
         sortByCreateDate(){
             this.sortAsc = !this.sortAsc;
-            this.$emit('updateData', this.sortAsc);      
+            this.$emit('sortData', this.sortAsc);      
         }
     }
 }
