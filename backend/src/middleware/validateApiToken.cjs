@@ -1,8 +1,8 @@
 const { apiToken } = require('../config/firebaseConfig.cjs');
 module.exports = async (req, res, next) => {
     let apiTokenHeader = req.headers.authorization;
-    apiTokenHeader = apiTokenHeader.replace('Bearer ', '');
     try {
+      apiTokenHeader = apiTokenHeader.replace('Bearer ', '');
       if(apiTokenHeader === apiToken) {
         next();
       }
