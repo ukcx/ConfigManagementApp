@@ -1,6 +1,6 @@
 {
     "version": 2,
     "name": "ConfigApp-backend",
-    "builds": [{ "src": "index.cjs", "use": "@vercel/node" }],
-    "routes": [{ "src": "/(.*)", "dest": "index.cjs" }]
+    "builds": [{ "src": "src/index.cjs", "use": "@vercel/node" }],
+    "routes": [{ "src": "/(.*)", "dest": "src/index.cjs" }]
   }
