@@ -1,7 +1,8 @@
 # Configuration Management App
 
-This is a full-stack web application that allows users to manage a project's configuration parameters. The application has a configuration management panel where users can log in and update, delete, or add parameters to a project. There is also division of data storage between different country codes, so that users can see, or update parameters for one selected country. 
-This application is built using the Vue3JS framework for front-end and uses a Firestore Database to store the project's parameters. The application also has a REST API for serving these configuration parameters. The authentication is handled by Firebase Authentication. For mobile users and a pre-defined api token is specified for fetching parameter values. Backend is built using NodeJS and ExpressJS. 
+This is a full-stack web application that allows users to manage a project's configuration parameters. The application provides a configuration management panel where users can log in and update, delete, or add parameters to a project. Data storage is divided by country codes, enabling users to view or update parameters for a selected country.
+
+The front end is built using the Vue 3 framework, while Firestore Database stores the project's parameters. The application also includes a REST API for serving these configuration parameters. Authentication is handled by Firebase Authentication. For mobile users, a predefined API token is specified for fetching parameter values. The back end is built using Node.js and Express.js.
 
 **The project is already set up and hosted in the following URL:** https://config-update-app-frontend.vercel.app/
 
